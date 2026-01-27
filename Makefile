@@ -1,3 +1,3 @@
 
 main:
-	gcc src/* -ldl -lglfw -o opengl.out
+	g++ src/* -lglfw -o opengl.out
