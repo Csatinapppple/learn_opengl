@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <fileReader.hpp>
 
 std::string read_file(const char* filename) {
 	std::ifstream file(filename);
