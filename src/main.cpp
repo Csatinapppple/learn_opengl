@@ -12,7 +12,7 @@ void handleId(unsigned int shaderId, GLenum pname);
 float vertices[] = {
 	-0.5f, -0.5f, 0.0f,
 	0.5f, -0.5f, 0.0f,
-	0.0f, -0.5f, 0.0f
+	0.0f, 0.5f, 0.0f
 };
 
 int main() {
@@ -26,7 +26,6 @@ int main() {
 	
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	GLFWwindow* window = glfwCreateWindow(800, 600, "learn opengl", NULL, NULL);
@@ -38,21 +37,12 @@ int main() {
 	}
 
 	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-	
-	glViewport(0, 0, 800, 600);
-	
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	
-	unsigned int VBO;
-
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	
@@ -61,9 +51,6 @@ int main() {
 	
 	handleId(vertexShader, GL_COMPILE_STATUS);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (void*) 0);
-	glEnableVertexAttribArray(0);
-	
 	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
@@ -79,20 +66,37 @@ int main() {
 
 	handleId(shaderProgram, GL_LINK_STATUS);
 	
-	glUseProgram(shaderProgram);
-
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+
+	unsigned int VBO, VAO;
+	glGenBuffers(1, &VBO);
+	glGenVertexArrays(1, &VAO);
+
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 	
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glBindVertexArray(0);
 
 	while(!glfwWindowShouldClose(window)){
 		processInput(window);
-
+		
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+		
+		glUseProgram(shaderProgram);
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 
-		glfwPollEvents();
 		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
 
 	glfwTerminate();
@@ -100,16 +104,26 @@ int main() {
 	return 0;
 }
 
-void handleId(unsigned int shaderId, GLenum pname) {
+void handleId(unsigned int id, GLenum pname) {
 	int success;
 	char infoLog[512];
 
-	glGetShaderiv(shaderId, pname, &success);
-	if (!success) {
-		glGetShaderInfoLog(shaderId, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER\n" << infoLog << std::endl;
+	switch (pname) {
+		case GL_LINK_STATUS:
+			glGetProgramiv(id, pname, &success);
+			if (!success) {
+				glGetProgramInfoLog(id, 512, NULL, infoLog);
+				std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+			}
+			break;
+		case GL_COMPILE_STATUS:
+			glGetShaderiv(id, pname, &success);
+			if (!success) {
+				glGetShaderInfoLog(id, 512, NULL, infoLog);
+				std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
+			}
+			break;
 	}
-
 }
 
 void processInput(GLFWwindow *window) {
