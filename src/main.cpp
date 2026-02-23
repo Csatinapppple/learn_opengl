@@ -26,8 +26,10 @@ int main() {
 	
 	std::string shaderSource = read_file("./src/shaders/vertex.glsl");
 	std::string fragmentSource = read_file("./src/shaders/fragment.glsl");
+	std::string fragmentSource2 = read_file("./src/shaders/fragment2.glsl");
 	const char *vertexShaderSource = shaderSource.c_str();
 	const char *fragmentShaderSource = fragmentSource.c_str();
+	const char *fragmentShaderSource2 = fragmentSource2.c_str();
 	
 	if (!glfwInit()) return -1;
 	
@@ -65,16 +67,35 @@ int main() {
 		
 	handleId(fragmentShader, GL_COMPILE_STATUS);
 
-	unsigned int shaderProgram = glCreateProgram();
+	unsigned int fragmentShader2 = glCreateShader(GL_FRAGMENT_SHADER);
 
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
+	glShaderSource(fragmentShader2, 1, &fragmentShaderSource2, NULL);
+	glCompileShader(fragmentShader2);
+		
+	handleId(fragmentShader2, GL_COMPILE_STATUS);
 
-	handleId(shaderProgram, GL_LINK_STATUS);
+	GLuint shaderPrograms[2];
 	
-	glDeleteShader(vertexShader);
+	shaderPrograms[0] = glCreateProgram();
+
+	glAttachShader(shaderPrograms[0], vertexShader);
+	glAttachShader(shaderPrograms[0], fragmentShader);
+	glLinkProgram(shaderPrograms[0]);
+
+	handleId(shaderPrograms[0], GL_LINK_STATUS);
+	
 	glDeleteShader(fragmentShader);
+
+	shaderPrograms[1] = glCreateProgram();
+
+	glAttachShader(shaderPrograms[1], vertexShader);
+	glAttachShader(shaderPrograms[1], fragmentShader2);
+	glLinkProgram(shaderPrograms[1]);
+
+	handleId(shaderPrograms[1], GL_LINK_STATUS);
+	
+	glDeleteShader(fragmentShader2);
+	glDeleteShader(vertexShader);
 
 	GLuint  VBO[2],
 				  VAO[2];
@@ -92,9 +113,9 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		glUseProgram(shaderProgram);
 		
 		for (int i = 0; i < 2; i++){
+			glUseProgram(shaderPrograms[i]);
 			glBindVertexArray(VAO[i]);
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 		}
