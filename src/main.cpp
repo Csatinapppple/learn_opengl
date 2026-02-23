@@ -3,6 +3,8 @@
 #include <iostream>
 #include <fileReader.hpp>
 
+void bindBuffersWithSizeAndData(GLuint VBOId, GLuint VAOId, GLsizeiptr size, const void* data);
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 void processInput(GLFWwindow *window);
@@ -26,7 +28,7 @@ int main() {
 	std::string fragmentSource = read_file("./src/shaders/fragment.glsl");
 	const char *vertexShaderSource = shaderSource.c_str();
 	const char *fragmentShaderSource = fragmentSource.c_str();
-
+	
 	if (!glfwInit()) return -1;
 	
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -74,21 +76,15 @@ int main() {
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	unsigned int VBO, VAO;
-	glGenBuffers(1, &VBO);
-	glGenVertexArrays(1, &VAO);
+	GLuint  VBO[2],
+				  VAO[2];
 
-	glBindVertexArray(VAO);
+	glGenBuffers(2, VBO);
+	glGenVertexArrays(2, VAO);
+
 	
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glBindVertexArray(0);
+	bindBuffersWithSizeAndData(VBO[0], VAO[0], sizeof(vertices) / 2, vertices);
+	bindBuffersWithSizeAndData(VBO[1], VAO[1], sizeof(vertices) / 2, vertices+9);
 
 	while(!glfwWindowShouldClose(window)){
 		processInput(window);
@@ -97,8 +93,11 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		glUseProgram(shaderProgram);
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		
+		for (int i = 0; i < 2; i++){
+			glBindVertexArray(VAO[i]);
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+		}
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -108,6 +107,16 @@ int main() {
 
 	return 0;
 }
+
+void bindBuffersWithSizeAndData(GLuint VBOId, GLuint VAOId, GLsizeiptr size, const void* data_start) {
+	glBindVertexArray(VAOId);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOId);
+	glBufferData(GL_ARRAY_BUFFER, size, data_start, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}  
 
 void handleId(unsigned int id, GLenum pname) {
 	int success;
