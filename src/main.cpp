@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <fileReader.hpp>
+#include <cmath>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -95,6 +96,7 @@ int main() {
 	glBindVertexArray(0);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	
 
 	while(!glfwWindowShouldClose(window)){
 		processInput(window);
@@ -102,7 +104,14 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
+		float timeValue = glfwGetTime();
+		float greenValue = (std::sin(timeValue) / 2.0) + 0.5f;
+		int vertexColorLocation = glGetUniformLocation(shaderProgram, "vertexColor");
+
 		glUseProgram(shaderProgram);
+
+		glUniform4f(vertexColorLocation, 0.f, greenValue, 0.f, 1.f);
+
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
