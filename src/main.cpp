@@ -3,12 +3,12 @@
 #include <iostream>
 #include <fileReader.hpp>
 #include <cmath>
+#include <shader.hpp>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 void processInput(GLFWwindow *window);
 
-void handleId(unsigned int shaderId, GLenum pname);
 
 float vertices[] = {
 	0.5f, 0.5f, 0.0f, 0.f, 0.f, 1.f,
@@ -24,11 +24,6 @@ unsigned int indices[] = {
 
 int main() {
 	
-	std::string shaderSource = read_file("./src/shaders/vertex.glsl");
-	std::string fragmentSource = read_file("./src/shaders/fragment.glsl");
-	const char *vertexShaderSource = shaderSource.c_str();
-	const char *fragmentShaderSource = fragmentSource.c_str();
-
 	if (!glfwInit()) return -1;
 	
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -51,30 +46,7 @@ int main() {
 		return -1;
 	}
 	
-	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-	
-	handleId(vertexShader, GL_COMPILE_STATUS);
-
-	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-		
-	handleId(fragmentShader, GL_COMPILE_STATUS);
-
-	unsigned int shaderProgram = glCreateProgram();
-
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	handleId(shaderProgram, GL_LINK_STATUS);
-	
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	Shader shader = Shader("./shaders/vertex.glsl","./shaders/fragment.glsl");
 
 	unsigned int VBO, VAO, EBO;
 	glGenBuffers(1, &VBO);
@@ -106,7 +78,7 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		glUseProgram(shaderProgram);
+		shader.use();
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -118,28 +90,6 @@ int main() {
 	glfwTerminate();
 
 	return 0;
-}
-
-void handleId(unsigned int id, GLenum pname) {
-	int success;
-	char infoLog[512];
-
-	switch (pname) {
-		case GL_LINK_STATUS:
-			glGetProgramiv(id, pname, &success);
-			if (!success) {
-				glGetProgramInfoLog(id, 512, NULL, infoLog);
-				std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-			}
-			break;
-		case GL_COMPILE_STATUS:
-			glGetShaderiv(id, pname, &success);
-			if (!success) {
-				glGetShaderInfoLog(id, 512, NULL, infoLog);
-				std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
-			}
-			break;
-	}
 }
 
 void processInput(GLFWwindow *window) {
