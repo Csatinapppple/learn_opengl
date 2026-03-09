@@ -11,15 +11,13 @@ void processInput(GLFWwindow *window);
 
 
 float vertices[] = {
-	0.5f, 0.5f, 0.0f, 0.f, 0.f, 1.f,
+	0.0f, 0.5f, 0.0f, 0.f, 0.f, 1.f,
 	0.5f, -0.5f, 0.0f, 0.f, 1.f, 0.f,
 	-0.5f, -0.5f, 0.0f, 1.f, 0.f, 0.f,
-	-0.5f, 0.5f, 0.0f, 0.5f, 0.f, 0.5f,
 };
 
 unsigned int indices[] = {
-	0, 1, 3,
-	1, 2, 3
+	0, 1, 2,
 };
 
 int main() {
@@ -81,7 +79,7 @@ int main() {
 		shader.use();
 
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
