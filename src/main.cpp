@@ -71,6 +71,9 @@ int main() {
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	
+	GLint hOffsetLocation = glGetUniformLocation(shader.ID, "hOffset");
+	
+	float hOffset = 0.0f;
 
 	while(!glfwWindowShouldClose(window)){
 		processInput(window);
@@ -79,6 +82,10 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		shader.use();
+		
+		hOffset += 0.001f;
+
+		glUniform1f(hOffsetLocation, hOffset);
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
