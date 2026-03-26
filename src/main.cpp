@@ -15,10 +15,10 @@ void processInput(GLFWwindow *window);
 
 
 float vertices[] = {
-	0.5f, 0.5f, 0.0f, 0.f, 0.f, 1.f, 1.0f, 1.0f,
-	0.5f, -0.5f, 0.0f, 0.f, 1.f, 0.f, 1.0f, 0.0f,
-	-0.5f, -0.5f, 0.0f, 1.f, 0.f, 0.f, 0.0f, 0.0f,
-	-0.5f, 0.5f, 0.0f, 1.0f, 0.f, 1.0f, 0.0f, 1.0f
+	0.5f, 0.5f, 0.0f, 0.f, 0.f, 1.f, 0.50f, 0.50f,
+	0.5f, -0.5f, 0.0f, 0.f, 1.f, 0.f, 0.50f, 0.40f,
+	-0.5f, -0.5f, 0.0f, 1.f, 0.f, 0.f, 0.40f, 0.50f,
+	-0.5f, 0.5f, 0.0f, 1.0f, 0.f, 1.0f, 0.40f, 0.50f
 };
 
 
@@ -64,8 +64,8 @@ int main() {
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
@@ -76,8 +76,8 @@ int main() {
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	
 	data = stbi_load("./assets/awesomeface.png", &width, &height, &nrChannels, 0);
 	
