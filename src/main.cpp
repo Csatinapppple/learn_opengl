@@ -15,10 +15,10 @@ void processInput(GLFWwindow *window);
 
 
 float vertices[] = {
-	0.5f, 0.5f, 0.0f, 0.f, 0.f, 1.f, 1.0f, 1.0f,
-	0.5f, -0.5f, 0.0f, 0.f, 1.f, 0.f, 1.0f, 0.0f,
+	0.5f, 0.5f, 0.0f, 0.f, 0.f, 1.f, 2.0f, 2.0f,
+	0.5f, -0.5f, 0.0f, 0.f, 1.f, 0.f, 2.0f, 0.0f,
 	-0.5f, -0.5f, 0.0f, 1.f, 0.f, 0.f, 0.0f, 0.0f,
-	-0.5f, 0.5f, 0.0f, 1.0f, 0.f, 1.0f, 0.0f, 1.0f
+	-0.5f, 0.5f, 0.0f, 1.0f, 0.f, 1.0f, 0.0f, 2.0f
 };
 
 
@@ -62,8 +62,8 @@ int main() {
 	glGenTextures(2, textures);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
