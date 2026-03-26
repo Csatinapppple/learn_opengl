@@ -27,6 +27,8 @@ unsigned int indices[] = {
 	1, 2, 3
 };
 
+float mixValue = 0.5;
+
 int main() {
 	
 	if (!glfwInit()) return -1;
@@ -115,6 +117,8 @@ int main() {
 	glUniform1i(glGetUniformLocation(shader.ID, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shader.ID, "texture2"), 1);
 	
+	unsigned int mixValueLocation = glGetUniformLocation(shader.ID, "mixValue");
+
 	while(!glfwWindowShouldClose(window)){
 		processInput(window);
 		
@@ -123,6 +127,8 @@ int main() {
 		
 		shader.use();
 		
+		glUniform1f(mixValueLocation, mixValue);
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textures[0]);
 		glActiveTexture(GL_TEXTURE1);
@@ -143,6 +149,12 @@ int main() {
 void processInput(GLFWwindow *window) {
 	if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
 		glfwSetWindowShouldClose(window, true);
+	}
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+		mixValue += 0.05;
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+		mixValue -= 0.05;
 	}
 }
 
