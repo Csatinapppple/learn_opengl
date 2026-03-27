@@ -5,6 +5,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <fileReader.hpp>
 #include <cmath>
 #include <shader.hpp>
@@ -51,6 +55,10 @@ int main() {
 		return -1;
 	}
 	
+	glm::mat4 trans = glm::mat4(1.0f);
+	trans = glm::rotate(trans, glm::radians(90.0f),  glm::vec3(0.0f, 0.0f, 1.0f));
+	trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
+
 	Shader shader = Shader("./shaders/vertex.glsl","./shaders/fragment.glsl");
 	
 	stbi_set_flip_vertically_on_load(true);
@@ -111,6 +119,8 @@ int main() {
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	
+	unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
+
 	shader.use();
 	glUniform1i(glGetUniformLocation(shader.ID, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shader.ID, "texture2"), 1);
@@ -121,7 +131,11 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		shader.use();
+		trans = glm::mat4(1.0f);
+		trans = glm::translate(trans, glm::vec3(0.5, -0.5f, 0.0f));
+		trans = glm::rotate(trans,(float)glfwGetTime(),  glm::vec3(0, 0, 1.0));
+
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 		
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textures[0]);
