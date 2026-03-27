@@ -132,8 +132,8 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		trans = glm::mat4(1.0f);
-		trans = glm::translate(trans, glm::vec3(0.5, -0.5f, 0.0f));
 		trans = glm::rotate(trans,(float)glfwGetTime(),  glm::vec3(0, 0, 1.0));
+		trans = glm::translate(trans, glm::vec3(0.5, -0.5f, 0.0f));
 
 		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 		
