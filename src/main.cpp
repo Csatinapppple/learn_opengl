@@ -31,8 +31,15 @@ unsigned int indices[] = {
 	1, 2, 3
 };
 
+glm::mat4 model = glm::mat4(1.0f);
+glm::mat4 view = glm::mat4(1.f);
+glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.f / 600.f, 0.1f, 100.f);
+glm::mat4 ortho = glm::ortho(0.f, 800.f, 0.f, 600.f, 0.1f, 100.f);
 int main() {
 	
+	model = glm::rotate(model, glm::radians(-55.f), glm::vec3(1,0,0));
+	view = glm::translate(view, glm::vec3(0,0,-3));
+
 	if (!glfwInit()) return -1;
 	
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -55,10 +62,6 @@ int main() {
 		return -1;
 	}
 	
-	glm::mat4 trans = glm::mat4(1.0f);
-	trans = glm::rotate(trans, glm::radians(90.0f),  glm::vec3(0.0f, 0.0f, 1.0f));
-	trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
-
 	Shader shader = Shader("./shaders/vertex.glsl","./shaders/fragment.glsl");
 	
 	stbi_set_flip_vertically_on_load(true);
@@ -119,7 +122,9 @@ int main() {
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	
-	unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
+	unsigned int modelLoc = glGetUniformLocation(shader.ID, "model");
+	unsigned int viewLoc = glGetUniformLocation(shader.ID, "view");
+	unsigned int projectionLoc = glGetUniformLocation(shader.ID, "projection");
 
 	shader.use();
 	glUniform1i(glGetUniformLocation(shader.ID, "texture1"), 0);
@@ -131,11 +136,9 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		trans = glm::mat4(1.0f);
-		trans = glm::translate(trans, glm::vec3(0.5, -0.5f, 0.0f));
-		trans = glm::rotate(trans,(float)glfwGetTime(),  glm::vec3(0, 0, 1.0));
-
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 		
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textures[0]);
