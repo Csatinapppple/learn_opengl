@@ -16,6 +16,7 @@ enum Camera_Movement {
 // Default camera values
 const float YAW         = -90.0f;
 const float PITCH       =  0.0f;
+const float ROLL				= 0.0f;
 const float SPEED       =  2.5f;
 const float SENSITIVITY =  0.1f;
 const float ZOOM        =  45.0f;
@@ -31,9 +32,11 @@ public:
     glm::vec3 Up;
     glm::vec3 Right;
     glm::vec3 WorldUp;
+		glm::vec3 WorldRight;
     // euler Angles
     float Yaw;
     float Pitch;
+		float Roll;
     // camera options
     float MovementSpeed;
     float MouseSensitivity;
@@ -46,6 +49,7 @@ public:
         WorldUp = up;
         Yaw = yaw;
         Pitch = pitch;
+				Roll = ROLL;
         updateCameraVectors();
     }
     // constructor with scalar values
@@ -83,10 +87,11 @@ public:
     {
         xoffset *= MouseSensitivity;
         yoffset *= MouseSensitivity;
-
-        Yaw   += xoffset;
-        Pitch += yoffset;
-
+			
+				
+				Yaw   += xoffset;
+				Pitch += yoffset;
+				
         // make sure that when pitch is out of bounds, screen doesn't get flipped
         if (constrainPitch)
         {
@@ -99,6 +104,11 @@ public:
         // update Front, Right and Up Vectors using the updated Euler angles
         updateCameraVectors();
     }
+
+		void ProcessRoll(float rollOffset){
+			Roll += rollOffset;
+			updateCameraVectors();
+		}
 
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(float yoffset)
@@ -120,9 +130,14 @@ private:
         front.y = sin(glm::radians(Pitch));
         front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
         Front = glm::normalize(front);
+			
+				WorldRight = glm::normalize(glm::cross(Front, WorldUp));
+				glm::mat4 rollRotation = glm::rotate(glm::mat4(1.0f), glm::radians(Roll), Front);
+
+
         // also re-calculate the Right and Up vector
-        Right = glm::normalize(glm::cross(Front, WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-        Up    = glm::normalize(glm::cross(Right, Front));
+        Right = glm::normalize(glm::vec3(rollRotation * glm::vec4(WorldRight, 0.0f)));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+        Up    = glm::normalize(glm::vec3(rollRotation * glm::vec4(WorldUp, 0.0f)));
     }
 };
 #endif

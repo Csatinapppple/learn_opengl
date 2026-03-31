@@ -269,8 +269,10 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn){
 	float yoffset = lastY - ypos;
 	lastX = xpos;
 	lastY = ypos;
-
-	camera.ProcessMouseMovement(xoffset, yoffset);
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		camera.ProcessRoll(xoffset);
+	else
+		camera.ProcessMouseMovement(xoffset, yoffset);
 
 }
 
