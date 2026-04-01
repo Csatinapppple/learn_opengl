@@ -137,26 +137,21 @@ int main() {
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindVertexArray(0);
 
+	unsigned int lightVAO;
+	glGenVertexArrays(1, &lightVAO);
+
 	glm::vec3 lightPos(1.2, 1.0, 2.0);
-	
-	unsigned int ModelLoc = glGetUniformLocation(shader.ID, "model");
-	unsigned int ViewLoc = glGetUniformLocation(shader.ID, "view");
-	unsigned int ProjectionLoc = glGetUniformLocation(shader.ID, "projection");
 
-	unsigned int whiteModelLoc = glGetUniformLocation(whiteShader.ID, "model");
-	unsigned int whiteViewLoc = glGetUniformLocation(whiteShader.ID, "view");
-	unsigned int whiteProjectionLoc = glGetUniformLocation(whiteShader.ID, "projection");
-
-	unsigned int objectColorLoc = glGetUniformLocation(shader.ID, "objectColor");
-	unsigned int lightColorLoc = glGetUniformLocation(shader.ID, "lightColor");
 	shader.use();
-	glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
-	glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
+	glm::vec3 objectColor(1.0, 0.5, 0.31);
+	glm::vec3 lightColor(1.0, 1.0, 1.0);
+	shader.set3f("objectColor", objectColor);
+	shader.set3f("lightColor", lightColor);
 	
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();
@@ -171,25 +166,24 @@ int main() {
 		glm::mat4 view = camera.GetViewMatrix();
 
 		shader.use();
-		glUniformMatrix4fv(ProjectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(ViewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		shader.setMatrix4f("projection", projection);
+		shader.setMatrix4f("view", view);
 
 		glm::mat4 model = glm::mat4(1.0f);
-		glUniformMatrix4fv(ModelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		shader.setMatrix4f("model", model);
 		
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		whiteShader.use();
-
-		glUniformMatrix4fv(whiteProjectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(whiteViewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		
+		whiteShader.setMatrix4f("projection", projection);
+		whiteShader.setMatrix4f("view", view);
 
 		glm::mat4 whiteModel = glm::mat4(1.0f);
 		whiteModel = glm::translate(whiteModel, lightPos);
 		whiteModel = glm::scale(whiteModel, glm::vec3(0.2f));
-		glUniformMatrix4fv(whiteModelLoc, 1, GL_FALSE, glm::value_ptr(whiteModel));
+		whiteShader.setMatrix4f("model", whiteModel);
 
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
