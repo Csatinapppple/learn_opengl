@@ -154,6 +154,9 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
+		lightPos.x = (std::sin((float)glfwGetTime()) * 2.0);
+		lightPos.z = (std::cos((float)glfwGetTime()) * 2.0);
+
 		shader.use();
 		
 		shader.set3f("lightPos", lightPos);
@@ -179,6 +182,7 @@ int main() {
 		glm::mat4 lightModel = glm::mat4(1.0f);
 		lightModel = glm::translate(lightModel, lightPos);
 		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+		
 		lightShader.setMatrix4f("model", lightModel);
 
 		glBindVertexArray(lightVAO);
