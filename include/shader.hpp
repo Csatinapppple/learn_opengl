@@ -14,10 +14,15 @@ public:
 
 	void use();
 	
-	void set3f(const std::string& name, glm::vec3 vec) const{
+	void setVec3f(const std::string& name, glm::vec3 vec) const{
 		GLuint location = glGetUniformLocation(ID, name.c_str());
 		glUniform3f(location, vec.x, vec.y, vec.z);
 	};
+
+	void set1ui(const std::string& name, unsigned int value) const {
+		GLuint location = glGetUniformLocation(ID, name.c_str());
+		glUniform1ui(location, value);
+	}
 
 	void setMatrix4f(const std::string& name, glm::mat4 mat) const{
 		GLuint location = glGetUniformLocation(ID, name.c_str());
