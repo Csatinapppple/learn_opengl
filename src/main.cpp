@@ -190,6 +190,8 @@ int main() {
 
 		lightShader.use();
 		
+		lightShader.setVec3f("cubeColor", lightColor);
+
 		lightShader.setMatrix4f("projection", projection);
 		lightShader.setMatrix4f("view", view);
 
