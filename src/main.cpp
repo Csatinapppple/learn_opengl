@@ -140,15 +140,14 @@ int main() {
 	glBindVertexArray(0);
 
 	shader.use();
-
-	shader.setVec3f("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
-	shader.setVec3f("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
-	shader.setVec3f("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
-	shader.set1ui("material.shininess", 32u);
+	
+	shader.setMaterial(MATERIAL_GOLD);
 	
 	glm::vec3 lightSpecular(1.0f, 1.0f, 1.0f);
 
-	shader.setVec3f("light.specular", lightSpecular);
+	shader.setVec3f("light.specular", glm::vec3(1.0f));
+	shader.setVec3f("light.ambient", glm::vec3(1.0f));
+	shader.setVec3f("light.diffuse", glm::vec3(1.0f));
 
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();
@@ -161,18 +160,6 @@ int main() {
 		
 		shader.use();
 		
-		glm::vec3 lightColor(
-				std::sin(glfwGetTime() * 2.0f),
-				std::sin(glfwGetTime() * 0.7f),
-				std::sin(glfwGetTime() * 1.3f));
-
-		glm::vec3 lightDiffuse = lightColor * glm::vec3(0.5f);
-		glm::vec3 lightAmbient = lightDiffuse * glm::vec3(0.2f);
-
-		shader.setVec3f("light.ambient", lightAmbient);
-		shader.setVec3f("light.diffuse", lightDiffuse);
-
-
 		shader.setVec3f("light.position", lightPos);
 		shader.setVec3f("viewPos", camera.Position);
 
