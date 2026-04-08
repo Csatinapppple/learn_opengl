@@ -14,6 +14,7 @@ struct Vertex {
 struct Texture {
 	unsigned int id;
 	std::string type;
+	std::string path;
 };
 
 class Mesh {
@@ -42,8 +43,8 @@ public:
 			{
 					glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
 					// retrieve texture number (the N in diffuse_textureN)
-					string number;
-					string name = textures[i].type;
+					std::string number;
+					std::string name = textures[i].type;
 					if(name == "texture_diffuse")
 							number = std::to_string(diffuseNr++);
 					else if(name == "texture_specular")
@@ -69,7 +70,7 @@ private:
 		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &EBO);
 
-		glBindVertexArray(VAO):
+		glBindVertexArray(VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 		

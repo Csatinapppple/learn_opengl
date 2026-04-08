@@ -29,7 +29,10 @@ public:
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
 	}
 	void setBool(const std::string& name, bool value) const;
-	void setInt(const std::string& name, int value) const;
+	void setInt(const std::string& name, int value) const{
+		GLuint location = glGetUniformLocation(ID, name.c_str());
+		glUniform1i(location, value);
+	};
 	void setFloat(const std::string& name, float value) const;
 };
 
