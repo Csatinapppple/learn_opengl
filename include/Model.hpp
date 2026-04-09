@@ -16,13 +16,28 @@
 
 class Model {
 public:
+	glm::vec3 translate = glm::vec3(0.0f);
+	glm::vec3 rotate;
+	glm::vec3 scale = glm::vec3(1.0f);
+
 	Model(std::string path){
 		loadModel(path);
+		std::cout << "SIZE OF MESHES" << std::endl;
+		std::cout << meshes.size() << std::endl;
 	}
 	void Draw(Shader& shader){
+		shader.setMatrix4f("model", getModel());
 		for (size_t i = 0; meshes.size() > i; i++)
 			meshes[i].Draw(shader);
 	}
+
+	glm::mat4 getModel() {
+		glm::mat4 model(1.0f);
+		model = glm::translate(model, translate);
+		model = glm::scale(model, scale);
+		return model;
+	}
+
 private:
 	std::vector<Mesh> meshes;
 	std::string directory;

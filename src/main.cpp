@@ -33,6 +33,10 @@ bool firstMouse = true;
 float deltaTime=0.0, lastFrame = 0.0;
 
 glm::vec3 lightPos(1.2, 1.0, 2.0);
+
+
+Model *suzanne;
+
 int main() {
 	
 
@@ -65,10 +69,12 @@ int main() {
 
 	glEnable(GL_DEPTH_TEST);
 	
-	stbi_set_flip_vertically_on_load(true);
+	//stbi_set_flip_vertically_on_load(true);
 	
 	Shader shader("./shaders/vertex.glsl", "./shaders/fragment.glsl");
-	Model ourModel("./assets/backpack/backpack.obj");
+
+	suzanne = new Model("./assets/Modelos3D/Suzanne.obj");
+	//Model cube("./assets/Modelos3D/Cube.obj");
 
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();
@@ -83,13 +89,15 @@ int main() {
 		
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.f);
 		glm::mat4 view = camera.GetViewMatrix();
-		glm::mat4 model = glm::mat4(1.0f);
-
 		shader.setMatrix4f("projection", projection);
 		shader.setMatrix4f("view", view);
-		shader.setMatrix4f("model", model);
 
-		ourModel.Draw(shader);
+		//cube.Draw(shader);
+		suzanne->Draw(shader);
+		
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//suzanne.Draw(shader);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -116,6 +124,14 @@ void processInput(GLFWwindow *window) {
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		camera.ProcessKeyboard(RIGHT, deltaTime);
+	}
+
+
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+		suzanne->scale -= 1.5 * deltaTime;
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+		suzanne->translate += 1.5 * deltaTime;
 	}
 
 
