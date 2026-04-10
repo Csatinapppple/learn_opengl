@@ -27,15 +27,8 @@ enum Operation {
 
 class Model {
 public:
-	glm::vec3 translate = glm::vec3(0.0f);
-	glm::vec3 rotate = glm::vec3(0.0f);
-	glm::vec3 scale = glm::vec3(1.0f);
-	Operation operation = TRANSLATE;
-
 	Model(std::string path){
 		loadModel(path);
-		std::cout << "SIZE OF MESHES" << std::endl;
-		std::cout << meshes.size() << std::endl;
 	}
 	void Draw(Shader& shader){
 		shader.setMatrix4f("model", getModel());
@@ -47,8 +40,9 @@ public:
 		this->operation = operation;
 	}
 
-	void moveModel(Axis axis, float sensitivity){
+	void moveModel(Axis axis, float deltaTime){
 		glm::vec3* chosen_op = nullptr;
+		float sensitivity = getSensitivity() * deltaTime;
 		switch (operation) {
 			case TRANSLATE:
 				chosen_op = &translate; break;
@@ -69,18 +63,40 @@ public:
 				chosen_op->z += sensitivity; break;
 		}
 	}
+
+	void resetModelScaleAndRotation() {
+		rotate = glm::vec3(0.0f);
+		scale = glm::vec3(1.0f);
+	}
 	
+private:
+	glm::vec3 translate = glm::vec3(0.0f);
+	glm::vec3 rotate = glm::vec3(0.0f);
+	glm::vec3 scale = glm::vec3(1.0f);
+	Operation operation = TRANSLATE;
+
 	glm::mat4 getModel() {
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, translate);
-		model = glm::scale(model, scale);
 		model = glm::rotate(model, glm::radians(rotate.x), glm::vec3(1.0, 0.0, 0.0));
 		model = glm::rotate(model, glm::radians(rotate.y), glm::vec3(0.0, 1.0, 0.0));
 		model = glm::rotate(model, glm::radians(rotate.z), glm::vec3(0.0, 0.0, 1.0));
+		model = glm::scale(model, scale);
 		return model;
 	}
 
-private:
+	float getSensitivity() {
+		float sens;
+		switch (operation) {
+			case TRANSLATE: sens = 5.0f; break;
+			case ROTATE: sens = 20.0f; break;
+			case SCALE:
+			case SCALE_SIMETRICAL: 
+				sens = 3.0f; break;
+		}
+		return sens;
+	}
+
 	std::vector<Mesh> meshes;
 	std::string directory;
 	std::vector<Texture> textures_loaded;

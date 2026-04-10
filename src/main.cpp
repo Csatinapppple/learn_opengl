@@ -129,29 +129,31 @@ void processInput(GLFWwindow *window) {
 	
 	/*
 		NumPad Controls
+		- (select last Model from modelList) + (select next Model from modelList)
 		7 (set Operation TRANSLATE to current Model) 8 9 (Sub X Add X) 
 		4 (set Operation ROTATE to current Model)    5 6 (Sub Y Add Y)
 		1 (set Operation SCALE to current Model)     2 3 (Sub Z Add Z)
-		0 (set Operation SCALE_SIMETRICALLY to current Model) (Operation
+		0 (set Operation SCALE_SIMETRICALLY to current Model)
+		. (reset Scaling and Rotation of current Model)
 	*/
-
+	
 	if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS) {
-		modelList[currentModel].moveModel(X_AXIS, -(deltaTime * 10.5));
+		modelList[currentModel].moveModel(X_AXIS, -deltaTime);
 	}
 	if (glfwGetKey(window, GLFW_KEY_KP_9) == GLFW_PRESS) {
-		modelList[currentModel].moveModel(X_AXIS, deltaTime * 10.5);
+		modelList[currentModel].moveModel(X_AXIS, deltaTime);
 	}
 	if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS) {
-		modelList[currentModel].moveModel(Y_AXIS, -(deltaTime * 10.5));
+		modelList[currentModel].moveModel(Y_AXIS, -deltaTime);
 	}
 	if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS) {
-		modelList[currentModel].moveModel(Y_AXIS, deltaTime * 10.5);
+		modelList[currentModel].moveModel(Y_AXIS, deltaTime);
 	}
 	if (glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS) {
-		modelList[currentModel].moveModel(Z_AXIS, -(deltaTime * 10.5));
+		modelList[currentModel].moveModel(Z_AXIS, -deltaTime);
 	}
 	if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS) {
-		modelList[currentModel].moveModel(Z_AXIS, deltaTime * 10.5);
+		modelList[currentModel].moveModel(Z_AXIS, deltaTime);
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_KP_7) == GLFW_PRESS) {
@@ -167,15 +169,21 @@ void processInput(GLFWwindow *window) {
 		modelList[currentModel].setOperation(SCALE_SIMETRICAL);
 	}
 
+	if (glfwGetKey(window, GLFW_KEY_KP_DECIMAL) == GLFW_PRESS) {
+		modelList[currentModel].resetModelScaleAndRotation();
+	}
+
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
 	if (key == GLFW_KEY_KP_ADD && action == GLFW_PRESS){
 		currentModel = std::min(++currentModel, static_cast<int>(modelList.size() - 1));
+		modelList[currentModel].setOperation(TRANSLATE);
 		std::cout << currentModel << std::endl;
 	}
 	if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_PRESS){
 		currentModel = std::max(0, --currentModel);
+		modelList[currentModel].setOperation(TRANSLATE);
 		std::cout << currentModel << std::endl;
 	}
 }
