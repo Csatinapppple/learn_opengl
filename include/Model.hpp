@@ -17,7 +17,7 @@
 class Model {
 public:
 	glm::vec3 translate = glm::vec3(0.0f);
-	glm::vec3 rotate;
+	float rotate_x=0.0, rotate_y = 0.0f, rotate_z = 0.0f;
 	glm::vec3 scale = glm::vec3(1.0f);
 
 	Model(std::string path){
@@ -35,6 +35,9 @@ public:
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, translate);
 		model = glm::scale(model, scale);
+		model = glm::rotate(model, glm::radians(rotate_x), glm::vec3(1.0, 0.0, 0.0));
+		model = glm::rotate(model, glm::radians(rotate_y), glm::vec3(0.0, 1.0, 0.0));
+		model = glm::rotate(model, glm::radians(rotate_z), glm::vec3(0.0, 0.0, 1.0));
 		return model;
 	}
 

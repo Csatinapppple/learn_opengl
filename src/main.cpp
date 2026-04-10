@@ -133,6 +133,12 @@ void processInput(GLFWwindow *window) {
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
 		suzanne->translate += 1.5 * deltaTime;
 	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+		suzanne->rotate_x += 100.0 * deltaTime;
+	}
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+		suzanne->rotate_z += 100.0 * deltaTime;
+	}
 
 
 }
