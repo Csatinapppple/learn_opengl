@@ -14,11 +14,23 @@
 
 #include <stb_image.h>
 
+enum Axis {
+	X_AXIS, Y_AXIS, Z_AXIS
+};
+
+enum Operation {
+	TRANSLATE,
+	ROTATE,
+	SCALE,
+	SCALE_SIMETRICAL
+};
+
 class Model {
 public:
 	glm::vec3 translate = glm::vec3(0.0f);
-	float rotate_x=0.0, rotate_y = 0.0f, rotate_z = 0.0f;
+	glm::vec3 rotate = glm::vec3(0.0f);
 	glm::vec3 scale = glm::vec3(1.0f);
+	Operation operation = TRANSLATE;
 
 	Model(std::string path){
 		loadModel(path);
@@ -30,14 +42,41 @@ public:
 		for (size_t i = 0; meshes.size() > i; i++)
 			meshes[i].Draw(shader);
 	}
+	
+	void setOperation(Operation operation){
+		this->operation = operation;
+	}
 
+	void moveModel(Axis axis, float sensitivity){
+		glm::vec3* chosen_op = nullptr;
+		switch (operation) {
+			case TRANSLATE:
+				chosen_op = &translate; break;
+			case ROTATE:
+				chosen_op = &rotate; break;
+			case SCALE:
+				chosen_op = &scale; break;
+			case SCALE_SIMETRICAL:
+				scale += sensitivity;
+				return;
+		};
+		switch (axis) {
+			case X_AXIS:
+				chosen_op->x += sensitivity; break;
+			case Y_AXIS:
+				chosen_op->y += sensitivity; break;
+			case Z_AXIS:
+				chosen_op->z += sensitivity; break;
+		}
+	}
+	
 	glm::mat4 getModel() {
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, translate);
 		model = glm::scale(model, scale);
-		model = glm::rotate(model, glm::radians(rotate_x), glm::vec3(1.0, 0.0, 0.0));
-		model = glm::rotate(model, glm::radians(rotate_y), glm::vec3(0.0, 1.0, 0.0));
-		model = glm::rotate(model, glm::radians(rotate_z), glm::vec3(0.0, 0.0, 1.0));
+		model = glm::rotate(model, glm::radians(rotate.x), glm::vec3(1.0, 0.0, 0.0));
+		model = glm::rotate(model, glm::radians(rotate.y), glm::vec3(0.0, 1.0, 0.0));
+		model = glm::rotate(model, glm::radians(rotate.z), glm::vec3(0.0, 0.0, 1.0));
 		return model;
 	}
 

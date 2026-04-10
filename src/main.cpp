@@ -20,6 +20,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double, double);
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -35,7 +36,8 @@ float deltaTime=0.0, lastFrame = 0.0;
 glm::vec3 lightPos(1.2, 1.0, 2.0);
 
 
-Model *suzanne;
+int currentModel = 0;
+std::vector<Model> modelList; 
 
 int main() {
 	
@@ -64,7 +66,7 @@ int main() {
 	
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouse_callback);
-	
+	glfwSetKeyCallback(window, key_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 
 	glEnable(GL_DEPTH_TEST);
@@ -73,8 +75,8 @@ int main() {
 	
 	Shader shader("./shaders/vertex.glsl", "./shaders/fragment.glsl");
 
-	suzanne = new Model("./assets/Modelos3D/Suzanne.obj");
-	//Model cube("./assets/Modelos3D/Cube.obj");
+	modelList.push_back(Model("./assets/Modelos3D/Suzanne.obj"));
+	modelList.push_back(Model("./assets/Modelos3D/Cube.obj"));
 
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();
@@ -92,12 +94,10 @@ int main() {
 		shader.setMatrix4f("projection", projection);
 		shader.setMatrix4f("view", view);
 
-		//cube.Draw(shader);
-		suzanne->Draw(shader);
+		for(int i = 0; i < modelList.size(); i++) {
+			modelList[i].Draw(shader);
+		}
 		
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		//suzanne.Draw(shader);
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -126,21 +126,58 @@ void processInput(GLFWwindow *window) {
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 	}
 
+	
+	/*
+		NumPad Controls
+		7 (set Operation TRANSLATE to current Model) 8 9 (Sub X Add X) 
+		4 (set Operation ROTATE to current Model)    5 6 (Sub Y Add Y)
+		1 (set Operation SCALE to current Model)     2 3 (Sub Z Add Z)
+		0 (set Operation SCALE_SIMETRICALLY to current Model) (Operation
+	*/
 
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		suzanne->scale -= 1.5 * deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS) {
+		modelList[currentModel].moveModel(X_AXIS, -(deltaTime * 10.5));
 	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		suzanne->translate += 1.5 * deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_KP_9) == GLFW_PRESS) {
+		modelList[currentModel].moveModel(X_AXIS, deltaTime * 10.5);
 	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-		suzanne->rotate_x += 100.0 * deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS) {
+		modelList[currentModel].moveModel(Y_AXIS, -(deltaTime * 10.5));
 	}
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		suzanne->rotate_z += 100.0 * deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS) {
+		modelList[currentModel].moveModel(Y_AXIS, deltaTime * 10.5);
+	}
+	if (glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS) {
+		modelList[currentModel].moveModel(Z_AXIS, -(deltaTime * 10.5));
+	}
+	if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS) {
+		modelList[currentModel].moveModel(Z_AXIS, deltaTime * 10.5);
 	}
 
+	if (glfwGetKey(window, GLFW_KEY_KP_7) == GLFW_PRESS) {
+		modelList[currentModel].setOperation(TRANSLATE);
+	}
+	if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS) {
+		modelList[currentModel].setOperation(ROTATE);
+	}
+	if (glfwGetKey(window, GLFW_KEY_KP_1) == GLFW_PRESS) {
+		modelList[currentModel].setOperation(SCALE);
+	}
+	if (glfwGetKey(window, GLFW_KEY_KP_0) == GLFW_PRESS) {
+		modelList[currentModel].setOperation(SCALE_SIMETRICAL);
+	}
 
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+	if (key == GLFW_KEY_KP_ADD && action == GLFW_PRESS){
+		currentModel = std::min(++currentModel, static_cast<int>(modelList.size() - 1));
+		std::cout << currentModel << std::endl;
+	}
+	if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_PRESS){
+		currentModel = std::max(0, --currentModel);
+		std::cout << currentModel << std::endl;
+	}
 }
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn){
