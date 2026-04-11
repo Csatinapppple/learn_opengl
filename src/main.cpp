@@ -75,9 +75,9 @@ int main() {
 	
 	Shader shader("./shaders/vertex.glsl", "./shaders/fragment.glsl");
 
-	modelList.push_back(Model("./assets/Modelos3D/Suzanne.obj"));
 	modelList.push_back(Model("./assets/Modelos3D/Cube.obj"));
-
+  modelList.push_back(Model("./assets/Modelos3D/Suzanne.obj"));
+	
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;

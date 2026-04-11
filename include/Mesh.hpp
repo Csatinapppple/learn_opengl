@@ -31,7 +31,7 @@ public:
 		this->vertices = vertices;
 		this->indices = indices;
 		this->textures = textures;
-		
+		std::cout << textures.size() << std::endl;
 		setupMesh();
 	}
 
@@ -59,6 +59,7 @@ public:
 			glBindVertexArray(VAO);
 			glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 			glBindVertexArray(0);
+			glBindTexture(GL_TEXTURE_2D, 0);
 	}  
 
 
