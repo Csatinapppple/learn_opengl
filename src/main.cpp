@@ -35,7 +35,7 @@ float deltaTime=0.0, lastFrame = 0.0;
 
 glm::vec3 lightPos(1.2, 1.0, 2.0);
 
-
+Shader* shaderGlobal;
 int currentModel = 0;
 std::vector<Model> modelList; 
 
@@ -73,7 +73,13 @@ int main() {
 	
 	//stbi_set_flip_vertically_on_load(true);
 	
-	Shader shader("./shaders/vertex.glsl", "./shaders/fragment.glsl");
+	Shader shader("./shaders/vertex.glsl", "./shaders/fragment.glsl", "./shaders/geometry.glsl");
+	shaderGlobal = &shader;
+	shader.use();
+
+	shader.setVec3f("wireframeColor", glm::vec3(0.0f, 1.0f, 0.0f));
+	shader.setFloat("wireframeWidth", 0.005f);
+	shader.setBool("wireframe", false);
 
 	modelList.push_back(Model("./assets/Modelos3D/Cube.obj"));
   modelList.push_back(Model("./assets/Modelos3D/Suzanne.obj"));
@@ -135,6 +141,7 @@ void processInput(GLFWwindow *window) {
 		1 (set Operation SCALE to current Model)     2 3 (Sub Z Add Z)
 		0 (set Operation SCALE_SIMETRICALLY to current Model)
 		. (reset Scaling and Rotation of current Model)
+		/ (set Wireframe ON and OFF)
 	*/
 	
 	if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS) {
@@ -176,6 +183,7 @@ void processInput(GLFWwindow *window) {
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+	static bool wireframe = false;
 	if (key == GLFW_KEY_KP_ADD && action == GLFW_PRESS){
 		currentModel = std::min(++currentModel, static_cast<int>(modelList.size() - 1));
 		modelList[currentModel].setOperation(TRANSLATE);
@@ -185,6 +193,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		currentModel = std::max(0, --currentModel);
 		modelList[currentModel].setOperation(TRANSLATE);
 		std::cout << currentModel << std::endl;
+	}
+	if (key == GLFW_KEY_KP_DIVIDE && action == GLFW_PRESS){
+		wireframe ^= 1;
+		shaderGlobal->setBool("wireframe", wireframe);
 	}
 }
 
