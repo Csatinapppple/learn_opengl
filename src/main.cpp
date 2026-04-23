@@ -115,7 +115,8 @@ int main() {
 
 	glEnable(GL_DEPTH_TEST);
 
-	unsigned int texture = loadTexture("./assets/container2.png");
+	unsigned int diffuseMap = loadTexture("./assets/container2.png");
+	unsigned int specularMap = loadTexture("./assets/container2_specular.png");
 
 	unsigned int VBO, VAO;
 	glGenBuffers(1, &VBO);
@@ -149,11 +150,13 @@ int main() {
 
 	shader.setInt("material.diffuse", 0);
 	shader.setFloat("material.shininess", 64);
-		shader.setVec3f("material.specular", glm::vec3(0.5, 0.5, 0.5)); 
+	shader.setInt("material.specular", 1); 
 	
 	
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindTexture(GL_TEXTURE_2D, diffuseMap);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, specularMap);
 	
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();
