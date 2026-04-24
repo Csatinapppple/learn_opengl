@@ -117,6 +117,7 @@ int main() {
 
 	unsigned int diffuseMap = loadTexture("./assets/container2.png");
 	unsigned int specularMap = loadTexture("./assets/container2_specular.png");
+	unsigned int emissionMap = loadTexture("./assets/matrix.jpg");
 
 	unsigned int VBO, VAO;
 	glGenBuffers(1, &VBO);
@@ -151,12 +152,15 @@ int main() {
 	shader.setInt("material.diffuse", 0);
 	shader.setFloat("material.shininess", 64);
 	shader.setInt("material.specular", 1); 
+	shader.setInt("material.emission", 2); 
 	
 	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, diffuseMap);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, specularMap);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, emissionMap);
 	
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();
