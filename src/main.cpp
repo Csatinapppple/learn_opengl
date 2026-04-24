@@ -116,7 +116,7 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 
 	unsigned int diffuseMap = loadTexture("./assets/container2.png");
-	unsigned int specularMap = loadTexture("./assets/container2_specular.png");
+	unsigned int specularMap = loadTexture("./assets/lighting_maps_specular_color.png");
 
 	unsigned int VBO, VAO;
 	glGenBuffers(1, &VBO);
