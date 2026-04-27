@@ -29,8 +29,8 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 bool orthographic = false;
-glm::mat4 ortho = glm::ortho(0.0f, static_cast<float>(SCR_WIDTH),
-		0.0f, static_cast<float>(SCR_HEIGHT), 0.1f, 100.f);
+glm::mat4 ortho = glm::ortho(
+		-4.0f, 4.f, -3.f, 3.0f, 0.1f, 100.f);
 
 Camera camera(glm::vec3(0.0, 0.0, 3.0));
 
