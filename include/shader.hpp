@@ -37,10 +37,19 @@ public:
 		GLuint ambientLoc = glGetUniformLocation(ID, "light.ambient");
 		GLuint diffuseLoc = glGetUniformLocation(ID, "light.diffuse");
 		GLuint specularLoc = glGetUniformLocation(ID, "light.specular");
+		
+		GLuint constantLoc = glGetUniformLocation(ID, "light.constant");
+		GLuint linearLoc = glGetUniformLocation(ID, "light.linear");
+		GLuint quadraticLoc = glGetUniformLocation(ID, "light.quadratic");
+
 		glUniform3f(ambientLoc, light.ambient.x, light.ambient.y, light.ambient.z);
 		glUniform3f(diffuseLoc, light.diffuse.x, light.diffuse.y, light.diffuse.z);
 		glUniform3f(specularLoc, light.specular.x, light.specular.y, light.specular.z);
 		glUniform3f(positionLoc, light.position.x, light.position.y, light.position.z);
+
+		glUniform1f(constantLoc, light.distance.constant);
+		glUniform1f(linearLoc, light.distance.linear);
+		glUniform1f(quadraticLoc, light.distance.quadratic);
 	}
 
 	void set1ui(const std::string& name, unsigned int value) const {

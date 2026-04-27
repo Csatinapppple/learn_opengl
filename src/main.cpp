@@ -40,13 +40,15 @@ float deltaTime=0.0, lastFrame = 0.0;
 
 Shader* shaderGlobal;
 int currentModel = 0;
+int currentLightDist = 0;
 std::vector<Model> modelList; 
 
 Light light = {
 	.position=glm::vec3(1.2, 1.0, 2.0),
 	.ambient=glm::vec3(1.0f),
 	.diffuse=glm::vec3(1.0f),
-	.specular=glm::vec3(1.0f)
+	.specular=glm::vec3(1.0f),
+	.distance = LIGHT_DISTANCES[currentLightDist]
 };
 
 int main() {
@@ -95,14 +97,14 @@ int main() {
 	Model lightCube = Model("./assets/Modelos3D/Cube.obj", MAT_JADE, true, light.position);
 
 	modelList.push_back(Model("./assets/Modelos3D/Cube.obj"));
-  modelList.push_back(Model("./assets/Modelos3D/Suzanne.obj", MAT_EMERALD));
+  modelList.push_back(Model("./assets/Modelos3D/Suzanne.obj", MAT_GOLD));
 	
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 		processInput(window);
-		
+
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
@@ -162,6 +164,8 @@ void processInput(GLFWwindow *window) {
 		0 (set Operation SCALE_SIMETRICALLY to current Model)
 		. (reset Scaling and Rotation of current Model)
 		/ (set Wireframe ON and OFF)
+		NM Cycle through materials on the currentModel
+		KL Increase Decrease Light Distance
 	*/
 	
 	if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS) {
@@ -202,6 +206,7 @@ void processInput(GLFWwindow *window) {
 
 }
 
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
 	static bool wireframe = false;
 	if (key == GLFW_KEY_KP_ADD && action == GLFW_PRESS){
@@ -221,6 +226,20 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 	if (key == GLFW_KEY_P && action == GLFW_PRESS){
 		orthographic ^= 1;
+	}
+	if (key == GLFW_KEY_M && action == GLFW_PRESS){
+		modelList[currentModel].cycleMaterial(true);
+	}
+	if (key == GLFW_KEY_N && action == GLFW_PRESS){
+		modelList[currentModel].cycleMaterial(false);
+	}
+	if (key == GLFW_KEY_L && action == GLFW_PRESS){
+		currentLightDist = std::min(++currentLightDist, static_cast<int>(LIGHT_DISTANCES.size() - 1));
+		light.distance = LIGHT_DISTANCES[currentLightDist];
+	}
+	if (key == GLFW_KEY_K && action == GLFW_PRESS){
+		currentLightDist = std::max(0, --currentLightDist);
+		light.distance = LIGHT_DISTANCES[currentLightDist];
 	}
 }
 

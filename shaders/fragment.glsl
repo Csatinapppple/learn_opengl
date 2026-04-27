@@ -17,6 +17,10 @@ struct Light {
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
+
+	float constant;
+	float linear;
+	float quadratic;
 };
 
 uniform Material material;
@@ -29,7 +33,18 @@ uniform float wireframeWidth;
 
 void main()
 {
-    vec3 ambient = light.ambient * material.ambient;
+	// Calculate distance to nearest edge
+	float minDist = min(vBarycentric.x, min(vBarycentric.y, vBarycentric.z));
+
+	// Draw wireframe only on the actual edges
+	// Use a small threshold (0.01-0.05) and make sure it's exactly on edges
+	if (minDist < wireframeWidth && wireframe) {
+		FragColor = vec4(wireframeColor, 1.0);
+	} else {
+		float distance = length(light.position - vFragPos);
+		float attenuation = 1.0 / (light.constant + light.linear * distance * light.quadratic * pow(distance, 2));
+
+		vec3 ambient = light.ambient * material.ambient;
 		vec3 norm = normalize(vNormal);
 		vec3 lightDir = normalize(light.position - vFragPos);
 		float diff = max(dot(norm, lightDir), 0.0);
@@ -38,21 +53,12 @@ void main()
 		vec3 reflectDir = reflect(-lightDir, norm);
 		float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess * 128);
 		vec3 specular = light.specular * (spec * material.specular);
+
+		ambient *= attenuation;
+		diffuse *= attenuation;
+		specular *= attenuation;
+
 		vec3 result = ambient + diffuse + specular;
-    
-    if (!wireframe) {
-        FragColor = vec4(result, 1.0);
-        return;
-    }
-    
-    // Calculate distance to nearest edge
-    float minDist = min(vBarycentric.x, min(vBarycentric.y, vBarycentric.z));
-    
-    // Draw wireframe only on the actual edges
-    // Use a small threshold (0.01-0.05) and make sure it's exactly on edges
-    if (minDist < wireframeWidth) {
-        FragColor = vec4(wireframeColor, 1.0);
-    } else {
-        FragColor = vec4(result, 1.0);
-    }
+		FragColor = vec4(result, 1.0);
+	}
 }

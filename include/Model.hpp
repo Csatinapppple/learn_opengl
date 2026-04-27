@@ -31,6 +31,7 @@ class Model {
 public:
 	Material material;
 	bool isLight = false;
+	int currentMaterial=1;
 
 	Model(std::string path, Material material=MAT_JADE, bool isLight=false,
 			glm::vec3 lightPos = glm::vec3(1.0f)){
@@ -52,6 +53,16 @@ public:
 			meshes[i].Draw();
 	}
 	
+	void cycleMaterial(bool up) {
+		if (up){
+			currentMaterial = std::min(++currentMaterial, static_cast<int>(MATERIALS.size()) - 1);
+			material = MATERIALS[currentMaterial];
+		}else{
+			currentMaterial = std::max(--currentMaterial, 0);
+			material = MATERIALS[currentMaterial];
+		}
+	}
+
 	void setOperation(Operation operation){
 		this->operation = operation;
 	}
