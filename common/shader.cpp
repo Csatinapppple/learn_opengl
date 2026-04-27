@@ -31,7 +31,7 @@ void handleId(unsigned int id, GLenum pname) {
 }
 
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr) {
+Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath) {
 	std::string vertexCode = read_file(vertexPath);
 	std::string fragmentCode = read_file(fragmentPath);
 	std::string geometryCode = (geometryPath) ? read_file(geometryPath) : "";

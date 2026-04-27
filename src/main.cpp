@@ -12,6 +12,9 @@
 #include <camera.hpp>
 #include <Model.hpp>
 
+#include <material.hpp>
+#include <light.hpp>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
@@ -25,7 +28,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-glm::mat4 ortho = glm::ortho(0.f, 800.f, 0.f, 600.f, 0.1f, 100.f);
+bool orthographic = false;
+glm::mat4 ortho = glm::ortho(0.0f, static_cast<float>(SCR_WIDTH),
+		0.0f, static_cast<float>(SCR_HEIGHT), 0.1f, 100.f);
 
 Camera camera(glm::vec3(0.0, 0.0, 3.0));
 
@@ -33,11 +38,16 @@ float lastX = SCR_WIDTH / 2.0f, lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 float deltaTime=0.0, lastFrame = 0.0;
 
-glm::vec3 lightPos(1.2, 1.0, 2.0);
-
 Shader* shaderGlobal;
 int currentModel = 0;
 std::vector<Model> modelList; 
+
+Light light = {
+	.position=glm::vec3(1.2, 1.0, 2.0),
+	.ambient=glm::vec3(1.0f),
+	.diffuse=glm::vec3(1.0f),
+	.specular=glm::vec3(1.0f)
+};
 
 int main() {
 	
@@ -74,15 +84,18 @@ int main() {
 	//stbi_set_flip_vertically_on_load(true);
 	
 	Shader shader("./shaders/vertex.glsl", "./shaders/fragment.glsl", "./shaders/geometry.glsl");
+	Shader lightShader("./shaders/lightVertex.glsl", "./shaders/lightFragment.glsl");
 	shaderGlobal = &shader;
 	shader.use();
 
 	shader.setVec3f("wireframeColor", glm::vec3(0.0f, 1.0f, 0.0f));
 	shader.setFloat("wireframeWidth", 0.005f);
 	shader.setBool("wireframe", false);
+	
+	Model lightCube = Model("./assets/Modelos3D/Cube.obj", MAT_JADE, true, light.position);
 
 	modelList.push_back(Model("./assets/Modelos3D/Cube.obj"));
-  modelList.push_back(Model("./assets/Modelos3D/Suzanne.obj"));
+  modelList.push_back(Model("./assets/Modelos3D/Suzanne.obj", MAT_EMERALD));
 	
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();
@@ -95,14 +108,21 @@ int main() {
 		
 		shader.use();
 		
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.f);
+		glm::mat4 projection = (orthographic) ? ortho : 
+			glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.f);
 		glm::mat4 view = camera.GetViewMatrix();
 		shader.setMatrix4f("projection", projection);
 		shader.setMatrix4f("view", view);
+		shader.setVec3f("viewPos", camera.Position);
 
 		for(int i = 0; i < modelList.size(); i++) {
-			modelList[i].Draw(shader);
+			modelList[i].Draw(shader, light);
 		}
+		
+		lightShader.use();
+		lightShader.setMatrix4f("projection", projection);
+		lightShader.setMatrix4f("view", view);
+		lightCube.Draw(lightShader, light);
 		
 
 		glfwSwapBuffers(window);
@@ -196,7 +216,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 	if (key == GLFW_KEY_KP_DIVIDE && action == GLFW_PRESS){
 		wireframe ^= 1;
+		shaderGlobal->use();
 		shaderGlobal->setBool("wireframe", wireframe);
+	}
+	if (key == GLFW_KEY_P && action == GLFW_PRESS){
+		orthographic ^= 1;
 	}
 }
 
