@@ -188,7 +188,9 @@ int main() {
 		shader.setVec3f("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f)); 
 		shader.setVec3f("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
     shader.setVec3f("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-    shader.setVec3f("light.position", lightPos);
+    shader.setVec3f("light.position", camera.Position);
+    shader.setVec3f("light.direction", camera.Front);
+    shader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
 
 		shader.setVec3f("viewPos", camera.Position);
 
