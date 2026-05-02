@@ -166,8 +166,10 @@ int main() {
 	shader.setInt("material.specular", 1); 
 	
 	shader.setFloat("light.constant", 1.0f);
-	shader.setFloat("light.linear", 0.007f);
-	shader.setFloat("light.quadratic", 0.0002f);
+	shader.setFloat("light.linear", 0.022f);
+	shader.setFloat("light.quadratic", 0.0019f);
+	shader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+	shader.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, diffuseMap);
@@ -190,7 +192,6 @@ int main() {
     shader.setVec3f("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
     shader.setVec3f("light.position", camera.Position);
     shader.setVec3f("light.direction", camera.Front);
-    shader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
 
 		shader.setVec3f("viewPos", camera.Position);
 
