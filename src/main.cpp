@@ -22,61 +22,61 @@ void scroll_callback(GLFWwindow* window, double, double);
 GLuint loadTexture(const char* path) ;
 
 float vertices[] = {
-    // positions          // normals           // texture coords
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+	// positions          // normals           // texture coords
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+	0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+	0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+	0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
 
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+	0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
+	0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+	0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
 
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+	0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+	0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+	0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+	0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+	0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+	0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+	0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+	0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+	0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+	0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 };
 
 glm::vec3 cubePositions[] = {
-    glm::vec3( 0.0f,  0.0f,  0.0f),
-    glm::vec3( 2.0f,  5.0f, -15.0f),
-    glm::vec3(-1.5f, -2.2f, -2.5f),
-    glm::vec3(-3.8f, -2.0f, -12.3f),
-    glm::vec3( 2.4f, -0.4f, -3.5f),
-    glm::vec3(-1.7f,  3.0f, -7.5f),
-    glm::vec3( 1.3f, -2.0f, -2.5f),
-    glm::vec3( 1.5f,  2.0f, -2.5f),
-    glm::vec3( 1.5f,  0.2f, -1.5f),
-    glm::vec3(-1.3f,  1.0f, -1.5f)
+	glm::vec3( 0.0f,  0.0f,  0.0f),
+	glm::vec3( 2.0f,  5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3( 2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f,  3.0f, -7.5f),
+	glm::vec3( 1.3f, -2.0f, -2.5f),
+	glm::vec3( 1.5f,  2.0f, -2.5f),
+	glm::vec3( 1.5f,  0.2f, -1.5f),
+	glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
 glm::vec3 pointLightPositions[] = {
@@ -99,17 +99,17 @@ bool firstMouse = true;
 float deltaTime=0.0, lastFrame = 0.0;
 
 int main() {
-	
+
 	stbi_set_flip_vertically_on_load(false);
 
 	if (!glfwInit()) return -1;
-	
+
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "learn opengl", NULL, NULL);
-	
+
 	if (window == NULL){
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
@@ -118,20 +118,20 @@ int main() {
 
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	
+
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-	
+
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(window, mouse_callback);
-	
+
 	glfwSetScrollCallback(window, scroll_callback);
 
 	Shader shader = Shader("./shaders/vertex.glsl","./shaders/fragment.glsl");
 	Shader lightShader = Shader("./shaders/lightVertex.glsl","./shaders/lightFragment.glsl");
-	
+
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -143,7 +143,7 @@ int main() {
 	glGenVertexArrays(1, &VAO);
 
 	glBindVertexArray(VAO);
-	
+
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
@@ -171,64 +171,71 @@ int main() {
 	shader.setInt("material.diffuse", 0);
 	shader.setFloat("material.shininess", 64);
 	shader.setInt("material.specular", 1); 
-	
-	DirLight dirLight = {
-		.direction=glm::vec3(-0.2f, -1.0f, -0.3f),
-		.ambient=glm::vec3(0.05f, 0.05f, 0.05f),
-		.diffuse=glm::vec3(0.4f, 0.4f, 0.4f),
-		.specular=glm::vec3(0.5f, 0.5f, 0.5f)
-	};
 
-	shader.setDirLight(dirLight);
-
-	SpotLight spotLight = {
-		.direction=camera.Front,
-		.position=camera.Position,
-		.ambient=glm::vec3(0.2f, 0.2f, 0.2f),
-		.diffuse=glm::vec3(0.5f, 0.5f, 0.5f),
-		.specular=glm::vec3(1.0f, 1.0f, 1.0f),
-		.constant=1.0f,
-		.linear=0.022f,
-		.quadratic=0.0019f,
-		.cutOff=glm::cos(glm::radians(12.5f)),
-		.outerCutOff=glm::cos(glm::radians(17.5f))
-	};
-
-	shader.setSpotLightConsts(spotLight);
-
-	PointLight pointLight = {
-		.ambient=glm::vec3(0.05f, 0.05f, 0.05f),
-		.diffuse=glm::vec3(0.8f, 0.8f, 0.8f),
-		.specular=glm::vec3(1.0f, 1.0f, 1.0f),
-		.constant=1.0f,
-		.linear=0.09f,
-		.quadratic=0.032f
-	};
-
-	for (size_t i = 0; i < 4; i++)
-		shader.setPointLight(pointLight, i, pointLightPositions[i]);
-	
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, diffuseMap);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, specularMap);
-	
+
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 		processInput(window);
-		
+
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
+
 		shader.use();
-		
-		spotLight.direction = camera.Front;
-		spotLight.position = camera.Position;
-		
-		shader.setSpotLightMut(spotLight);
+		// directional light
+		shader.setVec3f("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+		shader.setVec3f("dirLight.ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+		shader.setVec3f("dirLight.diffuse", glm::vec3(0.4f, 0.4f, 0.4f));
+		shader.setVec3f("dirLight.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+		// point light 1
+		shader.setVec3f("pointLights[0].position", pointLightPositions[0]);
+		shader.setVec3f("pointLights[0].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+		shader.setVec3f("pointLights[0].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+		shader.setVec3f("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		shader.setFloat("pointLights[0].constant", 1.0f);
+		shader.setFloat("pointLights[0].linear", 0.09f);
+		shader.setFloat("pointLights[0].quadratic", 0.032f);
+		// point light 2
+		shader.setVec3f("pointLights[1].position", pointLightPositions[1]);
+		shader.setVec3f("pointLights[1].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+		shader.setVec3f("pointLights[1].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+		shader.setVec3f("pointLights[1].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		shader.setFloat("pointLights[1].constant", 1.0f);
+		shader.setFloat("pointLights[1].linear", 0.09f);
+		shader.setFloat("pointLights[1].quadratic", 0.032f);
+		// point light 3
+		shader.setVec3f("pointLights[2].position", pointLightPositions[2]);
+		shader.setVec3f("pointLights[2].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+		shader.setVec3f("pointLights[2].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+		shader.setVec3f("pointLights[2].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		shader.setFloat("pointLights[2].constant", 1.0f);
+		shader.setFloat("pointLights[2].linear", 0.09f);
+		shader.setFloat("pointLights[2].quadratic", 0.032f);
+		// point light 4
+		shader.setVec3f("pointLights[3].position", pointLightPositions[3]);
+		shader.setVec3f("pointLights[3].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+		shader.setVec3f("pointLights[3].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+		shader.setVec3f("pointLights[3].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		shader.setFloat("pointLights[3].constant", 1.0f);
+		shader.setFloat("pointLights[3].linear", 0.09f);
+		shader.setFloat("pointLights[3].quadratic", 0.032f);
+		// spotLight
+		shader.setVec3f("spotLight.position", camera.Position);
+		shader.setVec3f("spotLight.direction", camera.Front);
+		shader.setVec3f("spotLight.ambient", glm::vec3(0.0f, 0.0f, 0.0f));
+		shader.setVec3f("spotLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
+		shader.setVec3f("spotLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		shader.setFloat("spotLight.constant", 1.0f);
+		shader.setFloat("spotLight.linear", 0.09f);
+		shader.setFloat("spotLight.quadratic", 0.032f);
+		shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+		shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));  		
 
 		shader.setVec3f("viewPos", camera.Position);
 
@@ -254,10 +261,10 @@ int main() {
 		}
 
 		lightShader.use();
-		
+
 		lightShader.setMatrix4f("projection", projection);
 		lightShader.setMatrix4f("view", view);
-		
+
 		glBindVertexArray(lightVAO);
 		for (glm::vec3 lightPos : pointLightPositions) {
 			glm::mat4 lightModel = glm::mat4(1.0f);
@@ -299,7 +306,7 @@ void processInput(GLFWwindow *window) {
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn){
 	float xpos = static_cast<float>(xposIn);
 	float ypos = static_cast<float>(yposIn);
-	
+
 	if (firstMouse) {
 		lastX = xpos;
 		lastY = ypos;
@@ -330,14 +337,14 @@ GLuint loadTexture(const char* path) {
 	GLuint texture;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	
+
 	GLenum format;
 	switch (nrChannels) {
 		case 1: format = GL_RED; break;
 		case 3: format = GL_RGB; break;
 		case 4: format = GL_RGBA; break;
 	};
-	
+
 	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
