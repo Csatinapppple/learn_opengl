@@ -106,22 +106,22 @@ public:
 		glUniform3f(specularLoc, dirLight.specular.x, dirLight.specular.y, dirLight.specular.z);
 	}
 
-	void setPointLight(PointLight& pointLight, size_t pos, glm::vec3 lightPos) {
+	void setPointLights(PointLight& pointLight, size_t pos, glm::vec3 lightPos) {
 		GLuint ambientLoc = glGetUniformLocation(
-				ID, ("pointLight[" + std::to_string(pos) + "].ambient").c_str());
+				ID, ("pointLights[" + std::to_string(pos) + "].ambient").c_str());
 		std::cout << ambientLoc << std::endl;
 		GLuint diffuseLoc = glGetUniformLocation(
-				ID, ("pointLight["+std::to_string(pos)+"].diffuse").c_str());
+				ID, ("pointLights["+std::to_string(pos)+"].diffuse").c_str());
 		GLuint specularLoc = glGetUniformLocation(
-				ID, ("pointLight["+std::to_string(pos)+"].specular").c_str());
+				ID, ("pointLights["+std::to_string(pos)+"].specular").c_str());
 		GLuint positionLoc = glGetUniformLocation(
-				ID, ("pointLight["+std::to_string(pos)+"].position").c_str());
+				ID, ("pointLights["+std::to_string(pos)+"].position").c_str());
 		GLuint constantLoc = glGetUniformLocation(
-				ID, ("pointLight["+std::to_string(pos)+"].constant").c_str());
+				ID, ("pointLights["+std::to_string(pos)+"].constant").c_str());
 		GLuint linearLoc = glGetUniformLocation(
-				ID, ("pointLight["+std::to_string(pos)+"].linear").c_str());
+				ID, ("pointLights["+std::to_string(pos)+"].linear").c_str());
 		GLuint quadraticLoc = glGetUniformLocation(
-				ID, ("pointLight["+std::to_string(pos)+"].quadratic").c_str());
+				ID, ("pointLights["+std::to_string(pos)+"].quadratic").c_str());
 		glUniform3f(ambientLoc, pointLight.ambient.x, pointLight.ambient.y, pointLight.ambient.z);
 		glUniform3f(diffuseLoc, pointLight.diffuse.x, pointLight.diffuse.y, pointLight.diffuse.z);
 		glUniform3f(specularLoc, pointLight.specular.x, pointLight.specular.y, pointLight.specular.z);
