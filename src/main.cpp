@@ -79,6 +79,14 @@ glm::vec3 cubePositions[] = {
     glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
+glm::vec3 pointLightPositions[] = {
+	glm::vec3( 0.7f,  0.2f,  2.0f),
+	glm::vec3( 2.3f, -3.3f, -4.0f),
+	glm::vec3(-4.0f,  2.0f, -12.0f),
+	glm::vec3( 0.0f,  0.0f, -3.0f)
+};  
+
+
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
@@ -90,7 +98,6 @@ float lastX = SCR_WIDTH / 2.0f, lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 float deltaTime=0.0, lastFrame = 0.0;
 
-glm::vec3 lightPos(1.2, 1.0, 2.0);
 int main() {
 	
 	stbi_set_flip_vertically_on_load(false);
@@ -165,12 +172,43 @@ int main() {
 	shader.setFloat("material.shininess", 64);
 	shader.setInt("material.specular", 1); 
 	
-	shader.setFloat("light.constant", 1.0f);
-	shader.setFloat("light.linear", 0.022f);
-	shader.setFloat("light.quadratic", 0.0019f);
-	shader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
-	shader.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
+	DirLight dirLight = {
+		.direction=glm::vec3(-0.2f, -1.0f, -0.3f),
+		.ambient=glm::vec3(0.05f, 0.05f, 0.05f),
+		.diffuse=glm::vec3(0.4f, 0.4f, 0.4f),
+		.specular=glm::vec3(0.5f, 0.5f, 0.5f)
+	};
+
+	shader.setDirLight(dirLight);
+
+	SpotLight spotLight = {
+		.direction=camera.Front,
+		.position=camera.Position,
+		.ambient=glm::vec3(0.2f, 0.2f, 0.2f),
+		.diffuse=glm::vec3(0.5f, 0.5f, 0.5f),
+		.specular=glm::vec3(1.0f, 1.0f, 1.0f),
+		.constant=1.0f,
+		.linear=0.022f,
+		.quadratic=0.0019f,
+		.cutOff=glm::cos(glm::radians(12.5f)),
+		.outerCutOff=glm::cos(glm::radians(17.5f))
+	};
+
+	shader.setSpotLightConsts(spotLight);
+
+	PointLight pointLight = {
+		.ambient=glm::vec3(0.05f, 0.05f, 0.05f),
+		.diffuse=glm::vec3(0.8f, 0.8f, 0.8f),
+		.specular=glm::vec3(1.0f, 1.0f, 1.0f),
+		.constant=1.0f,
+		.linear=0.09f,
+		.quadratic=0.032f
+	};
+
+	for (size_t i = 0; i < 4; i++)
+		shader.setPointLight(pointLight, i, pointLightPositions[i]);
 	
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, diffuseMap);
 	glActiveTexture(GL_TEXTURE1);
@@ -186,12 +224,11 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		shader.use();
-
-		shader.setVec3f("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f)); 
-		shader.setVec3f("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-    shader.setVec3f("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-    shader.setVec3f("light.position", camera.Position);
-    shader.setVec3f("light.direction", camera.Front);
+		
+		spotLight.direction = camera.Front;
+		spotLight.position = camera.Position;
+		
+		shader.setSpotLightMut(spotLight);
 
 		shader.setVec3f("viewPos", camera.Position);
 
@@ -200,6 +237,11 @@ int main() {
 
 		shader.setMatrix4f("projection", projection);
 		shader.setMatrix4f("view", view);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, diffuseMap);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, specularMap);
 
 		glBindVertexArray(VAO);
 		for (unsigned int i = 0; i < 10; i++){
@@ -215,14 +257,16 @@ int main() {
 		
 		lightShader.setMatrix4f("projection", projection);
 		lightShader.setMatrix4f("view", view);
-
-		glm::mat4 lightModel = glm::mat4(1.0f);
-		lightModel = glm::translate(lightModel, lightPos);
-		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
-		lightShader.setMatrix4f("model", lightModel);
-
+		
 		glBindVertexArray(lightVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		for (glm::vec3 lightPos : pointLightPositions) {
+			glm::mat4 lightModel = glm::mat4(1.0f);
+			lightModel = glm::translate(lightModel, lightPos);
+			lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+			lightShader.setMatrix4f("model", lightModel);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -250,21 +294,6 @@ void processInput(GLFWwindow *window) {
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 	}
-
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		lightPos.z -= 0.2;
-	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		lightPos.z += 0.2;
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-		lightPos.x -= 0.2;
-	}
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		lightPos.x += 0.2;
-	}
-
-
 }
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn){
