@@ -150,7 +150,7 @@ int main() {
 	shader.use();
 	shader.setInt("texture1", 0);
 	
-	glDepthFunc(GL_ALWAYS);
+	glDepthFunc(GL_LESS);
 
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();
