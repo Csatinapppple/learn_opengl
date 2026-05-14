@@ -117,6 +117,7 @@ int main() {
 	glfwSetScrollCallback(window, scroll_callback);
 
 	Shader shader = Shader("./shaders/vertex.glsl","./shaders/fragment.glsl");
+	Shader shaderSingleColor = Shader("./shaders/vertex.glsl","./shaders/lightFragment.glsl");
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -149,8 +150,12 @@ int main() {
 
 	shader.use();
 	shader.setInt("texture1", 0);
-	
+
 	glDepthFunc(GL_LESS);
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	glStencilFunc(GL_NOTEQUAL, 1, 0xff);
+
 
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();
@@ -159,7 +164,7 @@ int main() {
 		processInput(window);
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		shader.use();
 		glm::mat4 model = glm::mat4(1.0f);
@@ -169,8 +174,16 @@ int main() {
 
 		shader.setMatrix4f("view", view);
 		shader.setMatrix4f("projection", projection);
+		// floor
+		glStencilMask(0x00);
+		glBindVertexArray(floorVAO);
+		glBindTexture(GL_TEXTURE_2D, floorTexture);
+		shader.setMatrix4f("model", glm::mat4(1.0f));
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		glBindVertexArray(cubeVAO);
+		glStencilFunc(GL_ALWAYS, 1, 0xff);
+		glStencilMask(0xff);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, cubeTexture); 	
 		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
@@ -180,12 +193,30 @@ int main() {
 		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
 		shader.setMatrix4f("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-		// floor
-		glBindVertexArray(floorVAO);
-		glBindTexture(GL_TEXTURE_2D, floorTexture);
-		shader.setMatrix4f("model", glm::mat4(1.0f));
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		shaderSingleColor.use();
+		glBindVertexArray(cubeVAO);
+		shaderSingleColor.setMatrix4f("view", view);
+		shaderSingleColor.setMatrix4f("projection", projection);
+		glStencilFunc(GL_NOTEQUAL, 1, 0xff);
+		glStencilMask(0x00);
+		glDisable(GL_DEPTH_TEST);
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+		model = glm::scale(model, glm::vec3(1.1, 1.1, 1.1));
+		shaderSingleColor.setMatrix4f("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.1, 1.1, 1.1));
+		shaderSingleColor.setMatrix4f("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
 		glBindVertexArray(0);
+		glStencilMask(0xFF);
+		glStencilFunc(GL_ALWAYS, 0, 0xFF);
+		glEnable(GL_DEPTH_TEST);
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
