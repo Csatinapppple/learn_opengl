@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <map>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -168,19 +169,22 @@ int main() {
 
 	unsigned int cubeTexture = loadTexture("./assets/container2.png");
 	unsigned int floorTexture = loadTexture("./assets/wall.jpg");
-	unsigned int grassTexture = loadTexture("./assets/grass.png");
+	unsigned int grassTexture = loadTexture("./assets/blending_transparent_window.png");
 
 	shader.use();
 	shader.setInt("texture1", 0);
 
 	glDepthFunc(GL_LESS);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
-	std::vector<glm::vec3> vegetation;
-	vegetation.push_back(glm::vec3(-1.5f,  0.0f, -0.48f));
-	vegetation.push_back(glm::vec3( 1.5f,  0.0f,  0.51f));
-	vegetation.push_back(glm::vec3( 0.0f,  0.0f,  0.7f));
-	vegetation.push_back(glm::vec3(-0.3f,  0.0f, -2.3f));
-	vegetation.push_back(glm::vec3( 0.5f,  0.0f, -0.6f));  
+	std::vector<glm::vec3> windows;
+	windows.push_back(glm::vec3(-1.5f,  0.0f, -0.48f));
+	windows.push_back(glm::vec3( 1.5f,  0.0f,  0.51f));
+	windows.push_back(glm::vec3( 0.0f,  0.0f,  0.7f));
+	windows.push_back(glm::vec3(-0.3f,  0.0f, -2.3f));
+	windows.push_back(glm::vec3( 0.5f,  0.0f, -0.6f));  
 
 
 	while(!glfwWindowShouldClose(window)){
@@ -200,6 +204,11 @@ int main() {
 
 		shader.setMatrix4f("view", view);
 		shader.setMatrix4f("projection", projection);
+		// floor
+		glBindVertexArray(floorVAO);
+		glBindTexture(GL_TEXTURE_2D, floorTexture);
+		shader.setMatrix4f("model", glm::mat4(1.0f));
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		glBindVertexArray(cubeVAO);
 		glActiveTexture(GL_TEXTURE0);
@@ -215,19 +224,22 @@ int main() {
 
 		glBindVertexArray(grassVAO);
 		glBindTexture(GL_TEXTURE_2D, grassTexture);  
-		for(unsigned int i = 0; i < vegetation.size(); i++) 
+
+		std::map<float, glm::vec3> sorted;
+		for (unsigned int i = 0; i < windows.size(); i++)
 		{
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, vegetation[i]);				
-			shader.setMatrix4f("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
+			float distance = glm::length(camera.Position - windows[i]);
+			sorted[distance] = windows[i];
 		}
 
-		// floor
-		glBindVertexArray(floorVAO);
-		glBindTexture(GL_TEXTURE_2D, floorTexture);
-		shader.setMatrix4f("model", glm::mat4(1.0f));
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		for(std::map<float,glm::vec3>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) 
+		{
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, it->second);				
+			shader.setMatrix4f("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+		}  
+
 		glBindVertexArray(0);
 
 		glfwSwapBuffers(window);
