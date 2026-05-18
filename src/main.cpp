@@ -214,9 +214,12 @@ int main() {
 
 	shader.use();
 	shader.setInt("texture1", 0);
+
+	skyboxShader.use();
+	skyboxShader.setInt("skybox", 0);
 	
 	glEnable(GL_DEPTH_TEST);
-
+	glDepthFunc(GL_LEQUAL);
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -230,15 +233,6 @@ int main() {
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), 
 				(float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		
-		glDepthMask(GL_FALSE);
-		skyboxShader.use();
-		skyboxShader.setMatrix4f("view", skyboxView);
-		skyboxShader.setMatrix4f("projection", projection);
-		glBindVertexArray(skyboxVAO);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glDepthMask(GL_TRUE);
-
 		shader.use();
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 model = glm::mat4(1.0f);
@@ -262,6 +256,16 @@ int main() {
 		shader.setMatrix4f("model", glm::mat4(1.0f));
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
+
+		glDepthFunc(GL_LEQUAL);
+		skyboxShader.use();
+		skyboxShader.setMatrix4f("view", skyboxView);
+		skyboxShader.setMatrix4f("projection", projection);
+		glBindVertexArray(skyboxVAO);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDepthFunc(GL_LESS);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
