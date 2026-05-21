@@ -32,6 +32,7 @@ uniform sampler2D texture_diffuse1;
 uniform bool wireframe;
 uniform vec3 wireframeColor;
 uniform float wireframeWidth;
+uniform bool hasTexture;
 
 void main()
 {
@@ -50,7 +51,10 @@ void main()
 		vec3 norm = normalize(vNormal);
 		vec3 lightDir = normalize(light.position - vFragPos);
 		float diff = max(dot(norm, lightDir), 0.0);
-		vec3 diffuse = light.diffuse * (diff * material.diffuse + texture(texture_diffuse1, vTexCoords).rgb);
+		vec3 combinedDiffuse;
+		if (hasTexture) combinedDiffuse = material.diffuse * texture(texture_diffuse1, vTexCoords).rgb;
+		else combinedDiffuse = material.diffuse;
+		vec3 diffuse = light.diffuse * (diff * combinedDiffuse);
 		vec3 viewDir = normalize(viewPos - vFragPos);
 		vec3 reflectDir = reflect(-lightDir, norm);
 		float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess * 128);

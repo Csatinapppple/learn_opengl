@@ -22,6 +22,7 @@ public:
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 	std::vector<Texture> textures;
+	bool hasTexture;
 
 	Mesh(
 		std::vector<Vertex> vertices,
@@ -31,6 +32,7 @@ public:
 		this->vertices = vertices;
 		this->indices = indices;
 		this->textures = textures;
+		hasTexture = !textures.empty();
 		setupMesh();
 	}
 
@@ -39,6 +41,7 @@ public:
 			// draw mesh
 			unsigned int diffuseNr = 1;
 			unsigned int specularNr = 1;
+			shader.setInt("hasTexture", hasTexture);
 			for(unsigned int i = 0; i < textures.size(); i++)
 			{
 					glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
@@ -50,7 +53,7 @@ public:
 					else if(name == "texture_specular")
 							number = std::to_string(specularNr++);
 
-					shader.setInt(("material." + name + number), i);
+					shader.setInt((name + number), i);
 					glBindTexture(GL_TEXTURE_2D, textures[i].id);
 			}
 			glActiveTexture(GL_TEXTURE0);
