@@ -4,10 +4,12 @@ layout(triangle_strip, max_vertices = 3) out;  // Only output 3 vertices, not 6!
 
 in vec3 Normal[];
 in vec3 FragPos[];
+in vec2 TexCoords[];
 
 out vec3 vNormal;
 out vec3 vFragPos;
 out vec3 vBarycentric;
+out vec2 vTexCoords;
 
 void main() {
     // Just output the triangle normally with barycentric coordinates
@@ -15,6 +17,7 @@ void main() {
     for(int i = 0; i < 3; i++) {
         vNormal = Normal[i];
 				vFragPos = FragPos[i];
+				vTexCoords = TexCoords[i];
 
         // Set barycentric coordinates for edge detection
         vec3 barycentric = vec3(0.0);
