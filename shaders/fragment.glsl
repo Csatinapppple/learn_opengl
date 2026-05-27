@@ -28,6 +28,7 @@ uniform Material material;
 uniform Light light;
 uniform vec3 viewPos;
 uniform sampler2D texture_diffuse1;
+uniform samplerCube skybox;
 
 uniform bool wireframe;
 uniform vec3 wireframeColor;
@@ -58,11 +59,17 @@ void main()
 		vec3 viewDir = normalize(viewPos - vFragPos);
 		vec3 reflectDir = reflect(-lightDir, norm);
 		float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess * 128);
-		vec3 specular = light.specular * (spec * material.specular);
 
-		ambient *= attenuation;
-		diffuse *= attenuation;
-		specular *= attenuation;
+		vec3 I = normalize(vFragPos - viewPos);
+		vec3 R = reflect(I, norm);
+		vec3 specSkybox = texture(skybox, R).rgb;
+		vec3 combinedSpecular = material.specular;
+
+		vec3 specular = light.specular * (spec * combinedSpecular);
+		
+		ambient *= attenuation + specSkybox;
+		diffuse *= attenuation + specSkybox;
+		specular *= attenuation + specSkybox;
 
 		vec3 result = ambient + diffuse + specular;
 		FragColor = vec4(result, 1.0);

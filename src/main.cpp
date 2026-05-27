@@ -24,6 +24,7 @@ void processInput(GLFWwindow *window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double, double);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+GLuint loadSkybox(std::vector<std::string> faces);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -85,10 +86,25 @@ int main() {
 	
 	//stbi_set_flip_vertically_on_load(true);
 	
+	std::vector<std::string> faces
+	{
+			"./assets/skybox/right.jpg",
+			"./assets/skybox/left.jpg",
+			"./assets/skybox/top.jpg",
+			"./assets/skybox/bottom.jpg",
+			"./assets/skybox/front.jpg",
+			"./assets/skybox/back.jpg"
+	};
+	GLuint skybox = loadSkybox(faces);
+
 	Shader shader("./shaders/vertex.glsl", "./shaders/fragment.glsl", "./shaders/geometry.glsl");
 	Shader lightShader("./shaders/lightVertex.glsl", "./shaders/lightFragment.glsl");
 	shaderGlobal = &shader;
 	shader.use();
+	shader.setInt("skybox", 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
+
 
 	shader.setVec3f("wireframeColor", glm::vec3(0.0f, 1.0f, 0.0f));
 	shader.setFloat("wireframeWidth", 0.005f);
@@ -268,4 +284,36 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
+}
+
+unsigned int loadSkybox(std::vector<std::string> faces)
+{
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+	int width, height, nrChannels;
+	for (unsigned int i = 0; i < faces.size(); i++)
+	{
+		unsigned char *data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
+		if (data)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 
+					0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+					);
+			stbi_image_free(data);
+		}
+		else
+		{
+			std::cout << "Cubemap tex failed to load at path: " << faces[i] << std::endl;
+			stbi_image_free(data);
+		}
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	return textureID;
 }
