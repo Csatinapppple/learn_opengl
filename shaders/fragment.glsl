@@ -59,19 +59,19 @@ void main()
 		vec3 viewDir = normalize(viewPos - vFragPos);
 		vec3 reflectDir = reflect(-lightDir, norm);
 		float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess * 128);
+		vec3 specular = light.specular * (spec * material.specular);
 
 		vec3 I = normalize(vFragPos - viewPos);
 		vec3 R = reflect(I, norm);
 		vec3 specSkybox = texture(skybox, R).rgb;
-		vec3 combinedSpecular = material.specular;
 
-		vec3 specular = light.specular * (spec * combinedSpecular);
+		vec3 finalSpecular = mix(specular, specSkybox, material.shininess);
 		
-		ambient *= attenuation + specSkybox;
-		diffuse *= attenuation + specSkybox;
-		specular *= attenuation + specSkybox;
+		ambient *= attenuation;
+		diffuse *= attenuation;
+		specular *= attenuation;
 
-		vec3 result = ambient + diffuse + specular;
+		vec3 result = ambient + diffuse + finalSpecular;
 		FragColor = vec4(result, 1.0);
 	}
 }
