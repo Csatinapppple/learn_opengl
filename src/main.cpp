@@ -30,11 +30,14 @@ GLuint loadSkybox(std::vector<std::string> faces);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
+Camera camera(glm::vec3(0.0, 0.0, 3.0));
+
 bool orthographic = false;
 glm::mat4 ortho = glm::ortho(
 		-4.0f, 4.f, -3.f, 3.0f, 0.1f, 100.f);
-
-Camera camera(glm::vec3(0.0, 0.0, 3.0));
+glm::mat4 perspective =
+			glm::perspective(
+					glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.f);
 
 float lastX = SCR_WIDTH / 2.0f, lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -134,8 +137,10 @@ int main() {
 		
 		shader.use();
 		
-		glm::mat4 projection = (orthographic) ? ortho : 
+		glm::mat4 perspective =
 			glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.f);
+		glm::mat4 projection = (orthographic) ? ortho : perspective;
+
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 skyboxView = glm::mat4(glm::mat3(view));
 		shader.setMatrix4f("projection", projection);
@@ -152,7 +157,7 @@ int main() {
 		lightCube.Draw(lightShader, light);
 		
 		skyboxShader.use();
-		skyboxShader.setMatrix4f("projection", projection);
+		skyboxShader.setMatrix4f("projection", perspective);
 		skyboxShader.setMatrix4f("view", skyboxView);
 		skybox.draw();
 		
@@ -293,6 +298,9 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn){
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 	camera.ProcessMouseScroll(static_cast<float>(yoffset));
+	perspective =
+			glm::perspective(
+					glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.f);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
