@@ -63,20 +63,20 @@ void main()
 
 		vec3 I = normalize(vFragPos - viewPos);
 		vec3 R = reflect(I, norm);
-		vec3 colorSkybox = texture(skybox, R).rgb;
+		vec3 skyboxColor = texture(skybox, R).rgb;
 		
-		vec3 specularSkybox = material.specular * colorSkybox;
-		vec3 ambientSkybox = material.ambient * colorSkybox;
-		vec3 diffuseSkybox = material.diffuse * colorSkybox;
-		vec3 resultWithSkybox = specularSkybox + ambientSkybox + diffuseSkybox;
+		vec3 skyboxAmbient = skyboxColor * material.ambient;
+		vec3 skyboxSpecular = skyboxColor * material.specular;
+		vec3 skyboxDiffuse = skyboxColor * material.diffuse;
+
+		vec3 skyboxResult = skyboxAmbient + skyboxSpecular + skyboxDiffuse;
 		
 		ambient *= attenuation;
 		diffuse *= attenuation;
 		specular *= attenuation;
 
 		vec3 result = ambient + diffuse + specular;
-		
-		vec3 completeMix = mix(result, resultWithSkybox, material.shininess);
-		FragColor = vec4(completeMix, 1.0);
+		result = mix(result, skyboxResult, material.shininess);
+		FragColor = vec4(result, 1.0);
 	}
 }
