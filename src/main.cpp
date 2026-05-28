@@ -14,6 +14,7 @@
 
 #include <material.hpp>
 #include <light.hpp>
+#include <skybox.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -95,15 +96,22 @@ int main() {
 			"./assets/skybox/front.jpg",
 			"./assets/skybox/back.jpg"
 	};
-	GLuint skybox = loadSkybox(faces);
+	GLuint skyboxTex = loadSkybox(faces);
 
 	Shader shader("./shaders/vertex.glsl", "./shaders/fragment.glsl", "./shaders/geometry.glsl");
 	Shader lightShader("./shaders/lightVertex.glsl", "./shaders/lightFragment.glsl");
+	Shader skyboxShader("./shaders/skybox.vert", "./shaders/skybox.frag");
 	shaderGlobal = &shader;
+	
+	skyboxShader.use();
+	skyboxShader.setInt("skybox", 1);
+	
+	Skybox skybox;
+
 	shader.use();
 	shader.setInt("skybox", 1);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTex);
 
 
 	shader.setVec3f("wireframeColor", glm::vec3(0.0f, 1.0f, 0.0f));
@@ -129,6 +137,7 @@ int main() {
 		glm::mat4 projection = (orthographic) ? ortho : 
 			glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.f);
 		glm::mat4 view = camera.GetViewMatrix();
+		glm::mat4 skyboxView = glm::mat4(glm::mat3(view));
 		shader.setMatrix4f("projection", projection);
 		shader.setMatrix4f("view", view);
 		shader.setVec3f("viewPos", camera.Position);
@@ -142,7 +151,11 @@ int main() {
 		lightShader.setMatrix4f("view", view);
 		lightCube.Draw(lightShader, light);
 		
-
+		skyboxShader.use();
+		skyboxShader.setMatrix4f("projection", projection);
+		skyboxShader.setMatrix4f("view", skyboxView);
+		skybox.draw();
+		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
