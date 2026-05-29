@@ -10,6 +10,13 @@ struct Material {
 	float shininess;
 };
 
+const Material MAT_SUZANNE = {
+	glm::vec3(1.0, 1.0, 1.0),
+	glm::vec3(0.5, 0.5, 0.5),
+	glm::vec3(0, 0, 0),
+	233.659760f/ 4000
+};
+
 const Material MAT_EMERALD = {
 	glm::vec3(0.0215f, 0.1745f, 0.0215f),
 	glm::vec3(0.07568f, 0.61424f, 0.07568f),

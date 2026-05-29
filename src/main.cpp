@@ -124,7 +124,7 @@ int main() {
 	Model lightCube = Model("./assets/Modelos3D/Cube.obj", MAT_JADE, true, light.position);
 
 	modelList.push_back(Model("./assets/Modelos3D/Cube.obj"));
-  modelList.push_back(Model("./assets/Modelos3D/Suzanne.obj", MAT_GOLD));
+  modelList.push_back(Model("./assets/Modelos3D/Suzanne.obj", MAT_SUZANNE));
 	
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();
