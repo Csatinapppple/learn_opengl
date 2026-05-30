@@ -6,10 +6,13 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-out vec2 TexCoords;
+
+out VS_OUT {
+	vec2 TexCoords;
+} vs_out;
 
 void main() {
 		gl_Position = projection * view * model * vec4(aPos, 1.0);
-		TexCoords = aTexCoords;
+		vs_out.TexCoords = aTexCoords;
 		gl_PointSize = gl_Position.z;
 }
