@@ -153,7 +153,6 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, cubeTexture); 	
 		shader.setMatrix4f("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glDrawArrays(GL_POINTS, 0, 36);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
