@@ -11,4 +11,5 @@ out vec2 TexCoords;
 void main() {
 		gl_Position = projection * view * model * vec4(aPos, 1.0);
 		TexCoords = aTexCoords;
+		gl_PointSize = gl_Position.z;
 }
