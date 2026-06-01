@@ -70,6 +70,8 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 Camera camera(glm::vec3(0.0, 0.0, 3.0));
+glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), 
+			(float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
 float lastX = SCR_WIDTH / 2.0f, lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -107,6 +109,20 @@ int main() {
 	glfwSetScrollCallback(window, scroll_callback);
 
 	Shader shader = Shader("./shaders/vertex.glsl","./shaders/fragment.glsl");
+	
+	GLuint uniformBlockIndexShader = glGetUniformBlockIndex(shader.ID, "Matrices");
+	glUniformBlockBinding(shader.ID, uniformBlockIndexShader, 0);
+
+	GLuint uboMatrices;
+	glGenBuffers(1, &uboMatrices);
+	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof(glm::mat4));
+
+	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -129,6 +145,7 @@ int main() {
 	shader.setInt("texture1", 0);
 	
 	glEnable(GL_PROGRAM_POINT_SIZE);
+	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
 
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();
@@ -140,13 +157,9 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		shader.use();
-		glm::mat4 model = glm::mat4(1.0f);
 		glm::mat4 view = camera.GetViewMatrix();
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), 
-				(float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-
-		shader.setMatrix4f("view", view);
-		shader.setMatrix4f("projection", projection);
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
+		glm::mat4 model = glm::mat4(1.0f);
 
 		glBindVertexArray(cubeVAO);
 		glActiveTexture(GL_TEXTURE0);
@@ -203,6 +216,9 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn){
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 	camera.ProcessMouseScroll(static_cast<float>(yoffset));
+	projection = glm::perspective(glm::radians(camera.Zoom), 
+			(float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
