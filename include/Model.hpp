@@ -13,6 +13,7 @@
 #include <Mesh.hpp>
 #include <material.hpp>
 #include <light.hpp>
+#include <curve.hpp>
 
 #include <stb_image.h>
 
@@ -32,18 +33,23 @@ public:
 	Material material;
 	bool isLight = false;
 	int currentMaterial=1;
+	Curves* curves = nullptr;
 
-	Model(std::string path, bool isLight=false,
+	Model(std::string path, Curves* curves = nullptr,
+ 			bool isLight=false,
 			glm::vec3 lightPos = glm::vec3(1.0f)){
 		if (isLight){ 
 			translate = lightPos;
 			scale = glm::vec3(0.2);
 			this->isLight = true;
 		}
+		if (curves) {
+			this->curves = curves;
+		}
 		loadModel(path);
 	}
-	void Draw(Shader& shader, Light light){
-		shader.setMatrix4f("model", getModel());
+	void Draw(Shader& shader, Light light, float delta){
+		shader.setMatrix4f("model", getModel(delta));
 		if (!isLight) {
 			shader.setLight(light);
 			shader.setMaterial(material);
@@ -101,9 +107,15 @@ private:
 	glm::vec3 scale = glm::vec3(1.0f);
 	Operation operation = TRANSLATE;
 
-	glm::mat4 getModel() {
+	glm::mat4 getModel(float delta) {
+		glm::vec3 curvePos(0.0f);
+		if (curves != nullptr){ 
+			curves->update(delta);
+			curvePos = curves->getPosition();
+		}
+
 		glm::mat4 model(1.0f);
-		model = glm::translate(model, translate);
+		model = glm::translate(model, translate + curvePos);
 		model = glm::rotate(model, glm::radians(rotate.x), glm::vec3(1.0, 0.0, 0.0));
 		model = glm::rotate(model, glm::radians(rotate.y), glm::vec3(0.0, 1.0, 0.0));
 		model = glm::rotate(model, glm::radians(rotate.z), glm::vec3(0.0, 0.0, 1.0));

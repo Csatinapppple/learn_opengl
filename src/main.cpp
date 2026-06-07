@@ -15,6 +15,7 @@
 #include <material.hpp>
 #include <light.hpp>
 #include <skybox.hpp>
+#include <curve.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -119,9 +120,9 @@ int main() {
 	shader.setFloat("wireframeWidth", 0.005f);
 	shader.setBool("wireframe", false);
 	
-	Model lightCube = Model("./assets/Modelos3D/Cube.obj", true, light.position);
+	Model lightCube = Model("./assets/Modelos3D/Cube.obj",nullptr, true, light.position);
 
-	modelList.push_back(Model("./assets/Modelos3D/soccer_ball.obj"));
+	modelList.push_back(Model("./assets/Modelos3D/soccer_ball.obj", &CURVE_TEST));
   modelList.push_back(Model("./assets/Modelos3D/Suzanne.obj"));
 	
 	while(!glfwWindowShouldClose(window)){
@@ -146,13 +147,13 @@ int main() {
 		shader.setVec3f("viewPos", camera.Position);
 
 		for(int i = 0; i < modelList.size(); i++) {
-			modelList[i].Draw(shader, light);
+			modelList[i].Draw(shader, light, deltaTime);
 		}
 		
 		lightShader.use();
 		lightShader.setMatrix4f("projection", projection);
 		lightShader.setMatrix4f("view", view);
-		lightCube.Draw(lightShader, light);
+		lightCube.Draw(lightShader, light, deltaTime);
 		
 		skyboxShader.use();
 		skyboxShader.setMatrix4f("projection", perspective);
