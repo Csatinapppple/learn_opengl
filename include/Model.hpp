@@ -33,14 +33,13 @@ public:
 	bool isLight = false;
 	int currentMaterial=1;
 
-	Model(std::string path, Material material=MAT_JADE, bool isLight=false,
+	Model(std::string path, bool isLight=false,
 			glm::vec3 lightPos = glm::vec3(1.0f)){
 		if (isLight){ 
 			translate = lightPos;
 			scale = glm::vec3(0.2);
 			this->isLight = true;
 		}
-		this->material = material;
 		loadModel(path);
 	}
 	void Draw(Shader& shader, Light light){
@@ -189,13 +188,26 @@ private:
 
 		if(mesh->mMaterialIndex >= 0)
 		{
+			aiColor3D diffuse(0,0,0);
+			aiColor3D specular(0,0,0);
+			aiColor3D ambient(0,0,0);
+			float shininess;
+			
 			aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
 			std::vector<Texture> diffuseMaps = loadMaterialTextures(material, 
 					aiTextureType_DIFFUSE, "texture_diffuse");
 			textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+
 			std::vector<Texture> specularMaps = loadMaterialTextures(material, 
 					aiTextureType_SPECULAR, "texture_specular");
 			textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+			
+			material->Get(AI_MATKEY_COLOR_AMBIENT, ambient);
+			material->Get(AI_MATKEY_COLOR_SPECULAR, specular);
+			material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
+			material->Get(AI_MATKEY_SHININESS, shininess);
+			setMaterialFromAiColor3D(ambient, diffuse, specular, shininess);
+		
 		} 
 		return Mesh(vertices, indices, textures);
 	}
@@ -269,6 +281,19 @@ private:
 		}
 
 		return textureID;
+	}
+	void setMaterialFromAiColor3D(
+			aiColor3D ambient, aiColor3D diffuse, aiColor3D specular, float shininess){
+		this->material.ambient.x = ambient.r;
+		this->material.ambient.y = ambient.g;
+		this->material.ambient.z = ambient.b;
+		this->material.diffuse.x = diffuse.r;
+		this->material.diffuse.y = diffuse.g;
+		this->material.diffuse.z = diffuse.b;
+		this->material.specular.x = specular.r;
+		this->material.specular.y = specular.g;
+		this->material.specular.z = specular.b;
+		this->material.shininess = shininess;
 	}
 
 };

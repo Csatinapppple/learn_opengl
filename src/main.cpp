@@ -88,8 +88,6 @@ int main() {
 
 	glEnable(GL_DEPTH_TEST);
 	
-	//stbi_set_flip_vertically_on_load(true);
-	
 	std::vector<std::string> faces
 	{
 			"./assets/skybox/right.jpg",
@@ -121,10 +119,10 @@ int main() {
 	shader.setFloat("wireframeWidth", 0.005f);
 	shader.setBool("wireframe", false);
 	
-	Model lightCube = Model("./assets/Modelos3D/Cube.obj", MAT_JADE, true, light.position);
+	Model lightCube = Model("./assets/Modelos3D/Cube.obj", true, light.position);
 
-	modelList.push_back(Model("./assets/Modelos3D/Cube.obj"));
-  modelList.push_back(Model("./assets/Modelos3D/Suzanne.obj", MAT_SUZANNE));
+	modelList.push_back(Model("./assets/Modelos3D/soccer_ball.obj"));
+  modelList.push_back(Model("./assets/Modelos3D/Suzanne.obj"));
 	
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();

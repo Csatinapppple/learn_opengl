@@ -75,11 +75,6 @@ void main()
 		diffuse *= attenuation;
 		specular *= attenuation;
 		
-		if (material.ambient.rgb == 1.0) {
-			ambient = texture(texture_diffuse1, vTexCoords).rgb;
-			skyboxAmbient = texture(texture_diffuse1, vTexCoords).rgb;
-		}
-		
 		vec3 result = ambient + diffuse + specular;
 		result = mix(result, skyboxResult, material.shininess);
 		FragColor = vec4(result, 1.0);
