@@ -10,10 +10,11 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include <Mesh.hpp>
+#include <mesh.hpp>
 #include <material.hpp>
 #include <light.hpp>
 #include <curve.hpp>
+#include <optional>
 
 #include <stb_image.h>
 
@@ -33,19 +34,22 @@ public:
 	Material material;
 	bool isLight = false;
 	int currentMaterial=1;
-	Curves* curves = nullptr;
+	std::optional<Curves> curves = std::nullopt;
 
-	Model(std::string path, Curves* curves = nullptr,
- 			bool isLight=false,
-			glm::vec3 lightPos = glm::vec3(1.0f)){
-		if (isLight){ 
-			translate = lightPos;
-			scale = glm::vec3(0.2);
-			this->isLight = true;
-		}
-		if (curves) {
+	Model(
+			std::string path,
+			std::optional<Curves> curves = std::nullopt){
+		if (curves.has_value()) {
 			this->curves = curves;
 		}
+		loadModel(path);
+	}
+	Model(
+			std::string path,
+			glm::vec3 lightPos){
+		translate = lightPos;
+		scale = glm::vec3(0.2);
+		this->isLight = true;
 		loadModel(path);
 	}
 	void Draw(Shader& shader, float delta){
@@ -108,7 +112,7 @@ private:
 
 	glm::mat4 getModel(float delta) {
 		glm::vec3 curvePos(0.0f);
-		if (curves != nullptr){ 
+		if (curves.has_value()){ 
 			curves->update(delta);
 			curvePos = curves->getPosition();
 		}

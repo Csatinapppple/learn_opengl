@@ -10,12 +10,13 @@
 #include <cmath>
 #include <shader.hpp>
 #include <camera.hpp>
-#include <Model.hpp>
+#include <model.hpp>
 
 #include <material.hpp>
 #include <light.hpp>
 #include <skybox.hpp>
 #include <curve.hpp>
+#include <scene.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -89,6 +90,8 @@ int main() {
 
 	glEnable(GL_DEPTH_TEST);
 	
+	Scene scene = Scene("./scene.json");
+
 	std::vector<std::string> faces
 	{
 			"./assets/skybox/right.jpg",
@@ -123,9 +126,9 @@ int main() {
 	shader.setBool("wireframe", false);
 	shader.setPointLight(light, 0);
 	
-	Model lightCube = Model("./assets/Modelos3D/Cube.obj",nullptr, true, light.position);
+	Model lightCube = Model("./assets/Modelos3D/Cube.obj", light.position);
 
-	modelList.push_back(Model("./assets/Modelos3D/soccer_ball.obj", &CURVE_TEST));
+	modelList.push_back(Model("./assets/Modelos3D/soccer_ball.obj", CURVE_TEST));
   modelList.push_back(Model("./assets/Modelos3D/Suzanne.obj"));
 	
 	while(!glfwWindowShouldClose(window)){
