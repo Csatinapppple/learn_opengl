@@ -9,22 +9,16 @@ public:
 	float currentT = 0.0f;
 	float speed = 0.5f;
 
-	Curves(std::vector<glm::vec3> points){
-		this->points = points;
+	Curves(std::vector<glm::vec3> points) : points(points){
 	}
 
 	void update(float deltaTime) {
-		// Advance along the curve
 		currentT += speed * deltaTime;
 
-		// Loop back to start when reaching the end
 		if (currentT > 1.0f) {
-			currentT -= 1.0f;  // Wrap around for continuous looping
-			// OR: currentT = 1.0f;  // Stop at end
-			// OR: currentT = 0.0f;   // Reset to start
+			currentT = 0.0f;
 		}
 
-		// Clamp to valid range
 		currentT = glm::clamp(currentT, 0.0f, 1.0f);
 	}
 

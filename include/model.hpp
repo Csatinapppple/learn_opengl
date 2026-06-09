@@ -38,12 +38,24 @@ public:
 
 	Model(
 			std::string path,
-			std::optional<Curves> curves = std::nullopt){
-		if (curves.has_value()) {
-			this->curves = curves;
-		}
+			std::optional<Curves> curves = std::nullopt):curves(curves){
 		loadModel(path);
 	}
+
+	Model(
+			std::string path,
+			glm::vec3 translate,
+			glm::vec3 rotate,
+			glm::vec3 scale,
+			std::optional<Curves> curves = std::nullopt) :
+		translate(translate),
+		rotate(rotate),
+		scale(scale),
+		curves(curves)
+	{
+		loadModel(path);
+	}
+
 	Model(
 			std::string path,
 			glm::vec3 lightPos){
