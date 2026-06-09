@@ -2,6 +2,9 @@
 #define SCENE_HPP
 
 #include <fstream>
+#include <vector>
+#include <optional>
+#include <stdexcept>
 
 #include <glm/glm.hpp>
 #include <camera.hpp>
@@ -23,8 +26,13 @@ public:
 
 	Scene(const char* json_path){
 		std::ifstream f(json_path);
+		if (!f.is_open()) {
+			throw std::runtime_error("Cannot open file: " + std::string(json_path));
+		}
+		
 		json data = json::parse(f);
 
+		// Parse models
 		for (const auto& model_json : data["models"]){
 			std::string model_path = model_json["path"].get<std::string>();
 			std::optional<Curves> curves = std::nullopt;
@@ -32,15 +40,14 @@ public:
 			glm::vec3 rotate = parse_vec3(model_json["rotate"]);
 			glm::vec3 scale = parse_vec3(model_json["scale"]);
 
-			if (model_json.contains("curves") && !model_json["curves"].empty()){
-				for (const auto& curve : model_json["curves"]) {
-					std::vector<glm::vec3> points;
-					for (const auto& point : curve) {
-						points.push_back(parse_vec3(point));
-					}
-					curves = Curves(points);
+			if (model_json.contains("curves") && model_json["curves"].is_array() && !model_json["curves"].empty()){
+				std::vector<glm::vec3> points;
+				for (const auto& point : model_json["curves"]) {
+					points.push_back(parse_vec3(point));
 				}
+				curves = Curves(points);
 			}
+			
 			Model model(
 				model_path,
 				translate,
@@ -51,6 +58,7 @@ public:
 			models.push_back(model);
 		}
 		
+		// Parse camera
 		json cameraJson = data["camera"];
 
 		glm::vec3 camera_position = parse_vec3(cameraJson["position"]);
@@ -64,23 +72,36 @@ public:
 		float fov = frustrum["fov"].get<float>();
 
 		camera = Camera(
-				camera_position,
-				camera_up,
-				camera_front,
-				camera_yaw,
-				camera_pitch,
-				fov
+			camera_position,
+			camera_up,
+			camera_front,
+			camera_yaw,
+			camera_pitch,
+			fov
 		);
 		
 		projection = glm::perspective(
-				glm::radians(fov), 800.0f/600.0f, near, far);
+			glm::radians(fov), 800.0f/600.0f, near, far);
 
-		json lights = data["lights"];
-		
-		dirLight = parse_dir_light(lights["dirLight"]);
-		pointLights = parse_point_lights(lights["pointLights"]);
-		spotLights = parse_spot_lights(lights["spotLights"]);
-
+		// Parse lights
+		if (data.contains("lights")) {
+			json lights = data["lights"];
+			
+			// Parse directional light
+			if (lights.contains("dirLight")) {
+				dirLight = parse_dir_light(lights["dirLight"]);
+			}
+			
+			// Parse point lights - ONLY if it exists and is an array
+			if (lights.contains("pointLights") && lights["pointLights"].is_array()) {
+				pointLights = parse_point_lights(lights["pointLights"]);
+			}
+			
+			// Parse spot lights - ONLY if it exists and is an array
+			if (lights.contains("spotLights") && lights["spotLights"].is_array()) {
+				spotLights = parse_spot_lights(lights["spotLights"]);
+			}
+		}
 	}
 
 	DirLight parse_dir_light(const json& j) {
@@ -107,7 +128,6 @@ public:
 					.quadratic = pointLight["distance"]["quadratic"].get<float>(),
 				}
 			};
-
 			ret.push_back(newPointLight);
 		}
 		return ret;
@@ -116,7 +136,14 @@ public:
 	std::vector<SpotLight> parse_spot_lights(const json& j) {
 		std::vector<SpotLight> ret;
 		for (const auto& spotLight : j){
+			// Check if direction exists (required for spot light)
+			glm::vec3 direction = glm::vec3(0.0f, -1.0f, 0.0f);
+			if (spotLight.contains("direction")) {
+				direction = parse_vec3(spotLight["direction"]);
+			}
+			
 			SpotLight newSpotLight{
+				.direction = direction,
 				.position = parse_vec3(spotLight["position"]),
 				.ambient = parse_vec3(spotLight["ambient"]),
 				.diffuse = parse_vec3(spotLight["diffuse"]),
@@ -129,18 +156,20 @@ public:
 					.quadratic = spotLight["distance"]["quadratic"].get<float>(),
 				}
 			};
-
 			ret.push_back(newSpotLight);
 		}
 		return ret;
 	}
 
 	glm::vec3 parse_vec3(const json& j) {
+		if (!j.is_array()) {
+			throw std::runtime_error("Expected array for vec3");
+		}
+		if (j.size() != 3) {
+			throw std::runtime_error("Expected 3 elements for vec3, got " + std::to_string(j.size()));
+		}
 		return glm::vec3(j[0].get<float>(), j[1].get<float>(), j[2].get<float>());
 	}
-
-
-
 };
 
 #endif

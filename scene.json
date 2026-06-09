@@ -8,14 +8,14 @@
 			"scale" : [0.5, 0.5, 0.5]
 		},
 		{
-			"path" : "./assets/Modelos3D/suzanne.obj",
+			"path" : "./assets/Modelos3D/Suzanne.obj",
 			"curves" : [[-2.0, 1.0, 0.0], [0.0, 2.0, -1.0], [2.0, 1.0, 0.0], [0.0, 1.5, 2.0]],
 			"rotate" : [0.0, 180.0, 0.0],
 			"translate" : [-2.0, 1.0, 0.0],
 			"scale" : [0.8, 0.8, 0.8]
 		},
 		{
-			"path" : "./assets/Modelos3D/cube.obj",
+			"path" : "./assets/Modelos3D/Cube.obj",
 			"curves" : [[-4.0, 0.0, -5.0], [-2.0, 1.0, -5.0], [2.0, 1.0, -5.0], [4.0, 0.0, -5.0]],
 			"rotate" : [30.0, 45.0, 0.0],
 			"translate" : [-4.0, 0.0, -5.0],
@@ -29,14 +29,14 @@
 			"scale" : [0.4, 0.4, 0.4]
 		},
 		{
-			"path" : "./assets/Modelos3D/suzanne.obj",
+			"path" : "./assets/Modelos3D/Suzanne.obj",
 			"curves" : [[0.0, 1.0, -3.0], [2.0, 2.0, -2.0], [3.0, 1.0, 0.0], [1.0, 1.5, 1.0]],
 			"rotate" : [0.0, 0.0, 0.0],
 			"translate" : [0.0, 1.0, -3.0],
 			"scale" : [0.7, 0.7, 0.7]
 		},
 		{
-			"path" : "./assets/Modelos3D/cube.obj",
+			"path" : "./assets/Modelos3D/Cube.obj",
 			"curves" : [],
 			"rotate" : [0.0, 0.0, 0.0],
 			"translate" : [-2.0, -0.5, -4.0],
@@ -50,14 +50,14 @@
 			"scale" : [0.45, 0.45, 0.45]
 		},
 		{
-			"path" : "./assets/Modelos3D/suzanne.obj",
+			"path" : "./assets/Modelos3D/Suzanne.obj",
 			"curves" : [[-1.0, 0.0, 3.0], [1.0, 0.0, 3.0], [1.0, 0.0, 5.0], [-1.0, 0.0, 5.0]],
 			"rotate" : [0.0, 90.0, 0.0],
 			"translate" : [-1.0, 0.0, 3.0],
 			"scale" : [0.6, 0.6, 0.6]
 		},
 		{
-			"path" : "./assets/Modelos3D/cube.obj",
+			"path" : "./assets/Modelos3D/Cube.obj",
 			"curves": [],
 			"rotate": [0.0, 0.0, 0.0],
 			"translate": [4.0, 0.5, -2.0],
@@ -71,14 +71,14 @@
 			"scale": [0.5, 0.5, 0.5]
 		},
 		{
-			"path": "./assets/Modelos3D/suzanne.obj",
+			"path": "./assets/Modelos3D/Suzanne.obj",
 			"curves": [],
 			"rotate": [0.0, 45.0, 30.0],
 			"translate": [0.0, 2.0, -2.0],
 			"scale": [0.5, 0.5, 0.5]
 		},
 		{
-			"path": "./assets/Modelos3D/cube.obj",
+			"path": "./assets/Modelos3D/Cube.obj",
 			"curves": [[3.0, 0.0, 2.0], [4.0, 1.0, 3.0], [5.0, 0.5, 2.0], [4.0, 0.0, 1.0]],
 			"rotate": [45.0, 45.0, 45.0],
 			"translate": [3.0, 0.0, 2.0],
@@ -92,14 +92,14 @@
 			"scale": [0.35, 0.35, 0.35]
 		},
 		{
-			"path": "./assets/Modelos3D/suzanne.obj",
+			"path": "./assets/Modelos3D/Suzanne.obj",
 			"curves": [[5.0, 1.0, -1.0], [4.0, 1.5, -2.0], [3.0, 1.0, -3.0], [5.0, 1.0, -5.0]],
 			"rotate": [0.0, -90.0, 0.0],
 			"translate": [5.0, 1.0, -1.0],
 			"scale": [0.55, 0.55, 0.55]
 		},
 		{
-			"path": "./assets/Modelos3D/cube.obj",
+			"path": "./assets/Modelos3D/Cube.obj",
 			"curves": [[-3.0, 1.5, -4.0], [0.0, 2.5, -5.0], [3.0, 1.5, -4.0], [0.0, 2.0, -3.0]],
 			"rotate": [0.0, 0.0, 0.0],
 			"translate": [-3.0, 1.5, -4.0],
