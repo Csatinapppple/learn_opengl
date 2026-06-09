@@ -9,13 +9,34 @@ struct Distance {
 	float quadratic;
 };
 
-struct Light {
+struct PointLight {
 	glm::vec3 position;
 	glm::vec3 ambient;
 	glm::vec3 diffuse;
 	glm::vec3 specular;
 	
 	Distance distance;
+};
+
+struct SpotLight {
+	glm::vec3 direction;
+	glm::vec3 position;
+	glm::vec3 ambient;
+	glm::vec3 diffuse;
+	glm::vec3 specular;
+	
+	float cutOff;
+	float outerCutOff;
+	
+	Distance distance;
+};
+
+struct DirLight {
+	glm::vec3 direction;
+	glm::vec3 position;
+	glm::vec3 ambient;
+	glm::vec3 diffuse;
+	glm::vec3 specular;
 };
 
 const Distance LIGHT_DIST_7 = {

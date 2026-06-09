@@ -48,10 +48,9 @@ public:
 		}
 		loadModel(path);
 	}
-	void Draw(Shader& shader, Light light, float delta){
+	void Draw(Shader& shader, float delta){
 		shader.setMatrix4f("model", getModel(delta));
 		if (!isLight) {
-			shader.setLight(light);
 			shader.setMaterial(material);
 		}
 		for (size_t i = 0; meshes.size() > i; i++)

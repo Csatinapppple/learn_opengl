@@ -32,25 +32,70 @@ public:
 		glUniform1f(shininessLoc, material.shininess);
 	}
 
-	void setLight(Light light) {
-		GLuint positionLoc = glGetUniformLocation(ID, "light.position");
-		GLuint ambientLoc = glGetUniformLocation(ID, "light.ambient");
-		GLuint diffuseLoc = glGetUniformLocation(ID, "light.diffuse");
-		GLuint specularLoc = glGetUniformLocation(ID, "light.specular");
+	void setPointLight(PointLight light, int index) {
+		std::string pointLightIndex = "pointLights[" + std::to_string(index) + "]";
+		GLuint positionLoc = glGetUniformLocation(ID, (pointLightIndex + ".position").c_str());
+		GLuint ambientLoc = glGetUniformLocation(ID, (pointLightIndex + ".ambient").c_str());
+		GLuint diffuseLoc = glGetUniformLocation(ID, (pointLightIndex + ".diffuse").c_str());
+		GLuint specularLoc = glGetUniformLocation(ID, (pointLightIndex + ".specular").c_str());
 		
-		GLuint constantLoc = glGetUniformLocation(ID, "light.constant");
-		GLuint linearLoc = glGetUniformLocation(ID, "light.linear");
-		GLuint quadraticLoc = glGetUniformLocation(ID, "light.quadratic");
+		GLuint constantLoc = glGetUniformLocation(ID, (pointLightIndex + ".constant").c_str());
+		GLuint linearLoc = glGetUniformLocation(ID, (pointLightIndex + ".linear").c_str());
+		GLuint quadraticLoc = glGetUniformLocation(ID, (pointLightIndex + ".quadratic").c_str());
 
-		glUniform3f(ambientLoc, light.ambient.x, light.ambient.y, light.ambient.z);
-		glUniform3f(diffuseLoc, light.diffuse.x, light.diffuse.y, light.diffuse.z);
-		glUniform3f(specularLoc, light.specular.x, light.specular.y, light.specular.z);
-		glUniform3f(positionLoc, light.position.x, light.position.y, light.position.z);
+		glUniform3fv(ambientLoc, 1, glm::value_ptr(light.ambient));
+		glUniform3fv(diffuseLoc, 1, glm::value_ptr(light.diffuse));
+		glUniform3fv(specularLoc, 1, glm::value_ptr(light.specular));
+		glUniform3fv(positionLoc, 1, glm::value_ptr(light.position));
 
 		glUniform1f(constantLoc, light.distance.constant);
 		glUniform1f(linearLoc, light.distance.linear);
 		glUniform1f(quadraticLoc, light.distance.quadratic);
 	}
+
+	void setSpotLight(SpotLight light, int index) {
+		std::string spotLightIndex = "spotLights[" + std::to_string(index) + "]";
+		GLuint positionLoc = glGetUniformLocation(ID, (spotLightIndex + ".position").c_str());
+		GLuint directionLoc = glGetUniformLocation(ID, (spotLightIndex + ".direction").c_str());
+		GLuint ambientLoc = glGetUniformLocation(ID, (spotLightIndex + ".ambient").c_str());
+		GLuint diffuseLoc = glGetUniformLocation(ID, (spotLightIndex + ".diffuse").c_str());
+		GLuint specularLoc = glGetUniformLocation(ID, (spotLightIndex + ".specular").c_str());
+		
+		GLuint cutOffLoc = glGetUniformLocation(ID, (spotLightIndex + ".cutOff").c_str());
+		GLuint outerCutOffLoc = glGetUniformLocation(ID, (spotLightIndex + ".outerCutOff").c_str());
+		
+		GLuint constantLoc = glGetUniformLocation(ID, (spotLightIndex + ".constant").c_str());
+		GLuint linearLoc = glGetUniformLocation(ID, (spotLightIndex + ".linear").c_str());
+		GLuint quadraticLoc = glGetUniformLocation(ID, (spotLightIndex + ".quadratic").c_str());
+
+		glUniform3fv(ambientLoc, 1, glm::value_ptr(light.ambient));
+		glUniform3fv(diffuseLoc, 1, glm::value_ptr(light.diffuse));
+		glUniform3fv(specularLoc, 1, glm::value_ptr(light.specular));
+		glUniform3fv(positionLoc, 1, glm::value_ptr(light.position));
+		glUniform3fv(directionLoc, 1, glm::value_ptr(light.direction));
+
+		glUniform1f(cutOffLoc, light.cutOff);
+		glUniform1f(outerCutOffLoc, light.outerCutOff);
+
+		glUniform1f(constantLoc, light.distance.constant);
+		glUniform1f(linearLoc, light.distance.linear);
+		glUniform1f(quadraticLoc, light.distance.quadratic);
+	}
+
+	void setDirLight(DirLight light) {
+		GLuint positionLoc = glGetUniformLocation(ID, "dirLight.position");
+		GLuint directionLoc = glGetUniformLocation(ID, "dirLight.direction");
+		GLuint ambientLoc = glGetUniformLocation(ID, "dirLight.ambient");
+		GLuint diffuseLoc = glGetUniformLocation(ID, "dirLight.diffuse");
+		GLuint specularLoc = glGetUniformLocation(ID, "dirLight.specular");
+		
+		glUniform3fv(ambientLoc, 1, glm::value_ptr(light.ambient));
+		glUniform3fv(diffuseLoc, 1, glm::value_ptr(light.diffuse));
+		glUniform3fv(specularLoc, 1, glm::value_ptr(light.specular));
+		glUniform3fv(positionLoc, 1, glm::value_ptr(light.position));
+		glUniform3fv(directionLoc, 1, glm::value_ptr(light.direction));
+	}
+
 
 	void set1ui(const std::string& name, unsigned int value) const {
 		GLuint location = glGetUniformLocation(ID, name.c_str());

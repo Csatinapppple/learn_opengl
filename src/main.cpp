@@ -49,7 +49,7 @@ int currentModel = 0;
 int currentLightDist = 0;
 std::vector<Model> modelList; 
 
-Light light = {
+PointLight light = {
 	.position=glm::vec3(1.2, 1.0, 2.0),
 	.ambient=glm::vec3(1.0f),
 	.diffuse=glm::vec3(1.0f),
@@ -112,6 +112,8 @@ int main() {
 
 	shader.use();
 	shader.setInt("skybox", 1);
+	shader.setInt("pointLightSize", 1);
+	shader.setInt("spotLightSize", 0);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTex);
 
@@ -119,6 +121,7 @@ int main() {
 	shader.setVec3f("wireframeColor", glm::vec3(0.0f, 1.0f, 0.0f));
 	shader.setFloat("wireframeWidth", 0.005f);
 	shader.setBool("wireframe", false);
+	shader.setPointLight(light, 0);
 	
 	Model lightCube = Model("./assets/Modelos3D/Cube.obj",nullptr, true, light.position);
 
@@ -136,8 +139,6 @@ int main() {
 		
 		shader.use();
 		
-		glm::mat4 perspective =
-			glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.f);
 		glm::mat4 projection = (orthographic) ? ortho : perspective;
 
 		glm::mat4 view = camera.GetViewMatrix();
@@ -147,13 +148,13 @@ int main() {
 		shader.setVec3f("viewPos", camera.Position);
 
 		for(int i = 0; i < modelList.size(); i++) {
-			modelList[i].Draw(shader, light, deltaTime);
+			modelList[i].Draw(shader, deltaTime);
 		}
 		
 		lightShader.use();
 		lightShader.setMatrix4f("projection", projection);
 		lightShader.setMatrix4f("view", view);
-		lightCube.Draw(lightShader, light, deltaTime);
+		lightCube.Draw(lightShader, deltaTime);
 		
 		skyboxShader.use();
 		skyboxShader.setMatrix4f("projection", perspective);
