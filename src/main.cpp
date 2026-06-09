@@ -93,6 +93,8 @@ int main() {
 	Scene scene = Scene("./scene.json");
 
 	modelList = scene.models;
+	camera = scene.camera;
+	perspective = scene.projection;
 
 	std::vector<std::string> faces
 	{
@@ -117,10 +119,20 @@ int main() {
 
 	shader.use();
 	shader.setInt("skybox", 1);
-	shader.setInt("pointLightSize", 1);
-	shader.setInt("spotLightSize", 0);
+	shader.setInt("pointLightSize", scene.pointLights.size());
+	shader.setInt("spotLightSize", scene.spotLights.size());
+
+	for (int i = 0; i < scene.pointLights.size(); i++) {
+		shader.setPointLight(scene.pointLights[i], i);
+	}
+	for (int i = 0; i < scene.spotLights.size(); i++) {
+		shader.setSpotLight(scene.spotLights[i], i);
+	}
+
+	shader.setDirLight(scene.dirLight);
+
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTex);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
 
 	shader.setVec3f("wireframeColor", glm::vec3(0.0f, 1.0f, 0.0f));
