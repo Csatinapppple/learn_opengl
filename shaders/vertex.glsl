@@ -1,16 +1,19 @@
 #version 330 core
-layout (location = 0) in vec2 aPos;
-layout (location = 1) in vec3 aColor;
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec2 aTexCoords;
 
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+
+layout (std140) uniform Matrices {
+	mat4 projection;
+	mat4 view;
+};
 
 out VS_OUT {
-	vec3 fragColor;
+	vec2 texCoords;
 } vs_out;
 
 void main() {
-		gl_Position = projection * view * model * vec4(aPos,0, 1.0);
-		vs_out.fragColor = aColor;
+		gl_Position = projection * view * model * vec4(aPos, 1.0);
+		vs_out.texCoords = aTexCoords;
 }

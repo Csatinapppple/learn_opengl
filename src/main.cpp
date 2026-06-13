@@ -21,18 +21,57 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double, double);
 GLuint loadTexture(const char* path) ;
 
-float points[] = {
-	-0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // top-left
-	 0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // top-right
-	 0.5f, -0.5f, 0.0f, 0.0f, 1.0f,// bottom-right
-	-0.5f, -0.5f, 1.0f, 1.0f, 0.0f  // bottom-left
-};  
-
+float cubeVertices[] = {
+	// Back face
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // Bottom-left
+	0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right              
+	0.5f, -0.5f, -0.5f,  1.0f, 0.0f, // bottom-right    
+	0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left                
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+	// Front face
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+	0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-right        
+	0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+	0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, // top-left        
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+	// Left face
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
+	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-left       
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
+	// Right face
+	0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
+	0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right          
+	0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right      
+	0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right
+	0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
+	0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+	// Bottom face          
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
+	0.5f, -0.5f, -0.5f,  1.0f, 1.0f, // top-left        
+	0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
+	0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
+	// Top face
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+	0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right                 
+	0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f, // bottom-left  
+	0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f  // top-left              
+};
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 Camera camera(glm::vec3(0.0, 0.0, 3.0));
+glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), 
+			(float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
 float lastX = SCR_WIDTH / 2.0f, lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -70,24 +109,43 @@ int main() {
 	glfwSetScrollCallback(window, scroll_callback);
 
 	Shader shader = Shader("./shaders/vertex.glsl","./shaders/fragment.glsl", "./shaders/geometry.geom");
+	
+	GLuint uniformBlockIndexShader = glGetUniformBlockIndex(shader.ID, "Matrices");
+	glUniformBlockBinding(shader.ID, uniformBlockIndexShader, 0);
+
+	GLuint uboMatrices;
+	glGenBuffers(1, &uboMatrices);
+	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof(glm::mat4));
+
+	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	glEnable(GL_DEPTH_TEST);
 
-	GLuint VBO, VAO;
+	GLuint cubeVBO, cubeVAO;
 
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
+	glGenVertexArrays(1, &cubeVAO);
+	glGenBuffers(1, &cubeVBO);
+	glBindVertexArray(cubeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3*sizeof(float)));
 	glBindVertexArray(0);
 
+	unsigned int cubeTexture = loadTexture("./assets/container2.png");
+
 	shader.use();
-	glDepthFunc(GL_LESS);
+	shader.setInt("texture1", 0);
+	
+	glEnable(GL_PROGRAM_POINT_SIZE);
+	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
 
 	while(!glfwWindowShouldClose(window)){
 		float currentFrame = glfwGetTime();
@@ -99,18 +157,16 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		shader.use();
-		glm::mat4 model = glm::mat4(1.0f);
 		glm::mat4 view = camera.GetViewMatrix();
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), 
-				(float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
+		glm::mat4 model = glm::mat4(1.0f);
 
-		shader.setMatrix4f("view", view);
-		shader.setMatrix4f("projection", projection);
+		glBindVertexArray(cubeVAO);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, cubeTexture); 	
 		shader.setMatrix4f("model", model);
-		
-
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_POINTS, 0, 4);
+		shader.setFloat("time", static_cast<float>(glfwGetTime()));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -161,6 +217,9 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn){
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 	camera.ProcessMouseScroll(static_cast<float>(yoffset));
+	projection = glm::perspective(glm::radians(camera.Zoom), 
+			(float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
