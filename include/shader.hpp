@@ -49,6 +49,11 @@ public:
 		glUniform3f(location, vec.x, vec.y, vec.z);
 	};
 
+	void setVec2f(const std::string& name, glm::vec2 vec) const{
+		GLint location = glGetUniformLocation(ID, name.c_str());
+		glUniform2fv(location, 1, glm::value_ptr(vec));
+	};
+
 	void set1ui(const std::string& name, unsigned int value) const {
 		GLint location = glGetUniformLocation(ID, name.c_str());
 		glUniform1ui(location, value);
