@@ -76,8 +76,8 @@ float planeVertices[] = {
 	5.0f, -0.5f, -5.0f,  2.0f, 2.0f								
 };
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1200;
+const unsigned int SCR_HEIGHT = 1200;
 
 Camera camera(glm::vec3(0.0, 0.0, 3.0));
 
@@ -94,6 +94,7 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "learn opengl", NULL, NULL);
 
@@ -115,13 +116,20 @@ int main() {
 	glfwSetCursorPosCallback(window, mouse_callback);
 
 	glfwSetScrollCallback(window, scroll_callback);
+	
+	glEnable(GL_MULTISAMPLE);
 
 	Shader shader = Shader("./shaders/vertex.glsl","./shaders/fragment.glsl");
-
 	glEnable(GL_DEPTH_TEST);
+	
+	GLuint tex;
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, tex);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, SCR_WIDTH, SCR_HEIGHT, GL_TRUE);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 
 	GLuint cubeVBO, floorVBO, cubeVAO, floorVAO;
-
+	
 	glGenVertexArrays(1, &cubeVAO);
 	glGenBuffers(1, &cubeVBO);
 	glBindVertexArray(cubeVAO);
