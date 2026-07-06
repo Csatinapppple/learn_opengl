@@ -5,9 +5,9 @@ in GS_OUT {
 	vec2 texCoords;
 }fs_in;
 
-uniform sampler2D texture1;
+uniform sampler2D texture_diffuse1;
 
 void main() {
-	FragColor = texture(texture1, fs_in.texCoords);
+	FragColor = texture(texture_diffuse1, fs_in.texCoords);
 }
 
