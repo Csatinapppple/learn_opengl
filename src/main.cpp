@@ -79,7 +79,8 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    Shader shader("shaders/vertex.glsl", "shaders/fragment.glsl", "shaders/geometry.geom");
+    Shader shader("shaders/vertex.glsl", "shaders/fragment.glsl");
+    Shader normalShader("shaders/normal.vert", "shaders/normal.frag", "shaders/normal.geom");
 
     // load models
     // -----------
@@ -113,11 +114,14 @@ int main()
         shader.setMatrix4f("view", view);
         shader.setMatrix4f("model", model);
 
-        // add time component to geometry shader in the form of a uniform
-        shader.setFloat("time", static_cast<float>(glfwGetTime()));
-
-        // draw model
         nanosuit.Draw(shader);
+
+        normalShader.use();
+        normalShader.setMatrix4f("view", view);
+        normalShader.setMatrix4f("model", model);
+        normalShader.setMatrix4f("projection", projection);
+        nanosuit.Draw(normalShader);
+
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------

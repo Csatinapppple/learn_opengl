@@ -1,7 +1,7 @@
 #version 330
 out vec4 FragColor;
 
-in GS_OUT {
+in VS_OUT {
 	vec2 texCoords;
 }fs_in;
 
