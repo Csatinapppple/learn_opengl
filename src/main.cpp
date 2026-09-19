@@ -119,6 +119,7 @@ int main() {
 	Shader shader = Shader("./shaders/vertex.glsl","./shaders/fragment.glsl");
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_FRAMEBUFFER_SRGB);
 
 	GLuint cubeVBO, floorVBO, cubeVAO, floorVAO;
 
