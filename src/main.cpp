@@ -251,14 +251,14 @@ GLuint loadTexture(const char* path) {
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 
-	GLenum format;
+	GLenum format, format_texture;
 	switch (nrChannels) {
-		case 1: format = GL_RED; break;
-		case 3: format = GL_RGB; break;
-		case 4: format = GL_RGBA; break;
+		case 1: format = GL_RED; format_texture = GL_RED; break;
+		case 3: format = GL_RGB; format_texture = GL_SRGB; break;
+		case 4: format = GL_RGBA; format_texture = GL_SRGB_ALPHA; break;
 	};
 
-	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, format_texture, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
