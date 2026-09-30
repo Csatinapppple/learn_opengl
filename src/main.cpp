@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
@@ -27,6 +28,9 @@ const unsigned int SCR_HEIGHT = 600;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+glm::mat4 perspectiveProj = glm::perspective(
+		glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+
 float lastX = (float)SCR_WIDTH / 2.0;
 float lastY = (float)SCR_HEIGHT / 2.0;
 bool firstMouse = true;
@@ -82,6 +86,7 @@ int main()
 
 	// build and compile shaders
 	// -------------------------
+	Shader shader("shaders/shadowMap.vert", "shaders/shadowMap.frag");
 	Shader simpleDepthShader("shaders/shadowMapDepth.vert", "shaders/shadowMapDepth.frag");
 	Shader debugDepthQuad("shaders/debugMap.vert", "shaders/debugMap.frag");
 
@@ -142,7 +147,10 @@ int main()
 	// --------------------
 	debugDepthQuad.use();
 	debugDepthQuad.setInt("depthMap", 0);
-
+	
+	shader.use();
+	shader.setInt("diffuseTexture", 0);
+	shader.setInt("shadowMap", 1);
 	// lighting info
 	// -------------
 	glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
@@ -189,6 +197,18 @@ int main()
 		// reset viewport
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+		shader.use();
+		shader.setMatrix4f("projection", perspectiveProj);
+		shader.setMatrix4f("view", camera.GetViewMatrix());
+		shader.setVec3f("viewPos", camera.Position);
+		shader.setVec3f("lightPos", lightPos);
+		shader.setMatrix4f("lightSpaceMatrix", lightSpaceMatrix);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, woodTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		renderScene(shader);
 
 		// render Depth map to quad for visual debugging
 		// ---------------------------------------------
@@ -197,7 +217,7 @@ int main()
 		debugDepthQuad.setFloat("far_plane", far_plane);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, depthMap);
-		renderQuad();
+		//renderQuad();
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
