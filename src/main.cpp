@@ -122,6 +122,7 @@ int main()
 		shader.setMatrix4f("view", view);
 		// render normal-mapped quad
 		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::rotate(model, glm::radians((float)glfwGetTime() * -10.0f), glm::normalize(glm::vec3(1.0, 0.0, 0.0))); // rotate the quad to show normal mapping from multiple directions
 		shader.setMatrix4f("model", model);
 		shader.setVec3f("viewPos", camera.Position);
 		shader.setVec3f("lightPos", lightPos);
